@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0f0f0f;
+  --color-card: #1a1a1a;
+  --color-elevated: #242424;
+  --color-border: #2e2e2e;
+  --color-primary: #e50914;
+  --color-accent: #e50914;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a3a3a3;
+
+  --animate-fade-in: fade-in 0.5s ease-out both;
+  --animate-slide-up: slide-up 0.5s ease-out both;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text-primary antialiased;
+  }
+}
+
+@layer components {
+  .admin-page {
+    @apply min-h-screen bg-[#0a0a0a] text-text-primary;
+  }
+
+  .admin-panel {
+    @apply rounded-2xl border border-border bg-[#111] shadow-[0_24px_80px_rgba(0,0,0,0.28)];
+  }
+
+  .admin-panel-soft {
+    @apply rounded-2xl border border-border bg-[#0f0f0f];
+  }
+
+  .admin-input,
+  .admin-select,
+  .admin-textarea {
+    @apply w-full rounded-xl border border-border bg-[#0a0a0a] px-4 py-3 text-sm text-text-primary outline-none transition-colors placeholder:text-text-secondary/70 focus:border-primary focus:bg-[#111];
+  }
+
+  /* Improve native select usability and appearance */
+  .admin-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--color-primary) 50%), linear-gradient(135deg, var(--color-primary) 50%, transparent 50%);
+    background-position: calc(100% - 14px) calc(1em + 2px), calc(100% - 10px) calc(1em + 2px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    padding-right: 2.5rem; /* leave room for caret */
+  }
+
+  /* Ensure option text is readable where browsers allow it */
+  .admin-select option {
+    color: var(--color-text-primary);
+    background: var(--color-card);
+  }
+
+  /* Small fix for Edge/IE expand triangle */
+  .admin-select::-ms-expand {
+    display: none;
+  }
+
+  .admin-field-label {
+    @apply text-xs font-medium uppercase tracking-[0.18em] text-text-secondary;
+  }
+
+  .admin-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium;
+  }
+
+  .admin-pill-neutral {
+    @apply border-border bg-[#1a1a1a] text-text-secondary;
+  }
+
+  .admin-pill-status-published {
+    @apply border-emerald-500/20 bg-emerald-500/10 text-emerald-300;
+  }
+
+  .admin-pill-status-draft {
+    @apply border-amber-500/20 bg-amber-500/10 text-amber-300;
+  }
+
+  .admin-pill-quality {
+    @apply border-sky-500/20 bg-sky-500/10 text-sky-300;
+  }
+
+  .admin-pill-type {
+    @apply border-[#333] bg-[#1a1a1a] text-text-secondary capitalize;
+  }
+
+  .admin-table-wrap {
+    @apply overflow-hidden rounded-2xl border border-border bg-[#111];
+  }
+
+  /* Allow horizontal scroll on small screens for wide tables */
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+
+  .admin-table {
+    @apply w-full border-collapse text-left text-sm;
+  }
+
+  .admin-table thead th {
+    @apply whitespace-nowrap border-b border-border bg-[#0a0a0a] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-text-secondary;
+  }
+
+  .admin-table tbody tr {
+    @apply border-b border-[#1d1d1d] transition-colors hover:bg-[#1a1a1a];
+  }
+
+  .admin-table tbody tr:nth-child(even) {
+    @apply bg-[#0e0e0e];
+  }
+
+  .admin-table tbody td {
+    @apply px-4 py-3 align-middle;
+  }
+
+  .admin-icon-btn {
+    @apply inline-flex items-center justify-center rounded-lg border border-border bg-[#0a0a0a] p-2 text-text-secondary transition-colors hover:border-[#2f2f2f] hover:bg-[#1a1a1a] hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .admin-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .admin-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-[#0a0a0a] px-4 py-3 text-sm font-medium text-text-primary transition-colors hover:bg-[#1a1a1a] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .admin-btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/15 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 767px) {
+    .admin-panel { padding: 1rem; }
+    .admin-input, .admin-select, .admin-textarea { padding: 0.6rem 0.75rem; }
+    .admin-btn-primary, .admin-btn-secondary, .admin-btn-danger { width: 100%; display: inline-flex; justify-content: center; }
+    .admin-table thead th { display: none; }
+    .admin-table tbody tr { display: block; border-bottom: 1px solid var(--color-border); margin-bottom: 0.75rem; }
+    .admin-table tbody td { display: flex; justify-content: space-between; padding: 0.6rem; }
+    .admin-table tbody td::before { content: attr(data-label); font-size: 0.75rem; color: var(--color-text-secondary); margin-right: 0.5rem; }
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
