@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import SiteShell from '@/components/SiteShell';
 import React, { Suspense } from 'react';
@@ -22,6 +23,7 @@ export default function RootLayout({
         <Suspense fallback={<div />}> 
           <SiteShell>{children}</SiteShell>
         </Suspense>
+        <Analytics />
       </body>
     </html>
   );
