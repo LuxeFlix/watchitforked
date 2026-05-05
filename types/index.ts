@@ -16,5 +16,7 @@ export type Movie = {
   status: string
   tags: string[]
   views: number
+  rating?: number
+  votes?: number
   created_at: string
 }

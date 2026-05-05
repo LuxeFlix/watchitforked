@@ -8,8 +8,8 @@ import React, { Suspense } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'CineVault | Discover Movies & Series',
-  description: 'The ultimate destination for discovering your next favorite movie or web series. High quality, fast, and easy to browse.',
+  title: ' | Stream Movies & TV Shows',
+  description: 'Your ultimate destination for movies and TV shows. Stream thousands of titles directly through Telegram with no subscriptions required.',
 };
 
 export default function RootLayout({
@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-background text-text-primary antialiased`}>
+    <html lang="en">
+      <body className={`${inter.className} bg-portal-bg text-portal-text antialiased`}>
         <Suspense fallback={<div />}> 
           <SiteShell>{children}</SiteShell>
         </Suspense>

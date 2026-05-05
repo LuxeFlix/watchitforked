@@ -14,22 +14,22 @@ export async function getPublishedMovies(filters?: {
   const params: string[] = [];
   let paramCount = 0;
 
-  if (filters?.genre && filters.genre !== 'All') {
+  if (filters?.genre && filters.genre.toLowerCase() !== 'all') {
     paramCount++;
     where += ` AND $${paramCount} = ANY(genre)`;
     params.push(filters.genre);
   }
-  if (filters?.type && filters.type !== 'All') {
+  if (filters?.type && filters.type.toLowerCase() !== 'all') {
     paramCount++;
     where += ` AND type = $${paramCount}`;
     params.push(filters.type.toLowerCase());
   }
-  if (filters?.language && filters.language !== 'All') {
+  if (filters?.language && filters.language.toLowerCase() !== 'all') {
     paramCount++;
     where += ` AND language = $${paramCount}`;
     params.push(filters.language);
   }
-  if (filters?.quality && filters.quality !== 'All') {
+  if (filters?.quality && filters.quality.toLowerCase() !== 'all') {
     paramCount++;
     where += ` AND quality = $${paramCount}`;
     params.push(filters.quality);
