@@ -1,4 +1,5 @@
 import { toggleMovieStatus } from '@/lib/queries'
+import { revalidateTag, revalidatePath } from 'next/cache'
 
 export async function PATCH(
   request: Request,
@@ -12,6 +13,8 @@ export async function PATCH(
       return Response.json({ error: 'Movie not found' }, { status: 404 })
     }
 
+    revalidateTag('movie-details', 'default')
+    revalidatePath('/')
     return Response.json(movie)
   } catch {
     return Response.json(

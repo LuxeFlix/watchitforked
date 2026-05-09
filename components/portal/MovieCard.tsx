@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Star, Calendar, Monitor } from 'lucide-react';
 import { Movie } from '@/types';
 
-export default function MovieCard({ movie }: { movie: Movie }) {
+export default function MovieCard({ movie, priority }: { movie: Movie, priority?: boolean }) {
   return (
     <Link 
       href={`/movie/${movie.id}`} 
@@ -14,6 +14,7 @@ export default function MovieCard({ movie }: { movie: Movie }) {
           src={movie.poster_url} 
           alt={movie.title}
           fill
+          priority={priority}
           sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 224px"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />

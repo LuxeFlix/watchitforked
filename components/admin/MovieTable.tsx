@@ -268,12 +268,19 @@ export default function MovieTable({ movies }: { movies: Movie[] }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {pagedRows.map((movie) => (
+                  {pagedRows.map((movie, index) => (
                     <tr key={movie.id} className="border-t border-border align-top">
                       <td className="p-2.5 align-middle">
                         <div className="relative h-[72px] w-12 overflow-hidden rounded-md bg-[#1a1a1a]">
                           {movie.poster_url ? (
-                            <Image src={movie.poster_url} alt={movie.title} fill className="object-cover" sizes="48px" />
+                            <Image 
+                              src={movie.poster_url} 
+                              alt={movie.title} 
+                              fill 
+                              className="object-cover" 
+                              sizes="48px" 
+                              priority={index < 5}
+                            />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center text-xs text-text-secondary">N/A</div>
                           )}
@@ -329,7 +336,7 @@ export default function MovieTable({ movies }: { movies: Movie[] }) {
 
           {/* Card view for small screens */}
           <div className="md:hidden grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-            {pagedRows.map((movie) => (
+            {pagedRows.map((movie, index) => (
               <article
                 key={movie.id}
                 className="group overflow-hidden rounded-2xl border border-border bg-[#111] shadow-[0_24px_70px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5 hover:border-[#343434]"
@@ -342,6 +349,7 @@ export default function MovieTable({ movies }: { movies: Movie[] }) {
                           src={movie.poster_url}
                           alt={movie.title}
                           fill
+                          priority={index < 2}
                           className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                           sizes="(max-width: 768px) 84px, (max-width: 1024px) 96px, 112px"
                         />

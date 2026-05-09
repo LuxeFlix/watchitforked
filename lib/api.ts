@@ -15,6 +15,31 @@ export const getMovieDetails = unstable_cache(
     const movie = await getMovieById(movieId);
     if (!movie) return null;
 
+    const processLinks = (quality: string, value: string | null, label: string) => {
+      if (!value) return []
+      try {
+        const parsed = JSON.parse(value)
+        if (Array.isArray(parsed)) {
+          return parsed.map((item: any) => ({
+            quality,
+            name: item.episode ? `${movie.title} - Ep ${item.episode} (${quality})` : `${movie.title} - ${quality}`,
+            size: quality === '480p' ? '952.42 MB' : quality === '720p' ? '1.2 GB' : quality === '1080p' ? '2.4 GB' : '5.8 GB',
+            tag: quality === '2k' ? 'Ultra HD' : 'Good Encode',
+            url: item.url
+          }))
+        }
+      } catch {
+        // Not JSON
+      }
+      return [{ 
+        quality, 
+        name: `${movie.title} - ${label}`, 
+        size: quality === '480p' ? '952.42 MB' : quality === '720p' ? '1.2 GB' : quality === '1080p' ? '2.4 GB' : '5.8 GB',
+        tag: quality === '2k' ? 'Ultra HD' : 'Good Encode',
+        url: value 
+      }]
+    }
+
     // Map DB model to the requested frontend structure
     return {
       title: movie.title,
@@ -25,14 +50,15 @@ export const getMovieDetails = unstable_cache(
       genres: movie.genre || [],
       bannerImage: movie.sample_images?.[0] || movie.poster_url,
       thumbnail: movie.poster_url,
+      type: movie.type,
       downloads: [
-        movie.download_480p && { quality: '480p', name: `${movie.title} - 480p`, size: '952.42 MB', tag: 'Good Encode', url: movie.download_480p },
-        movie.download_720p && { quality: '720p', name: `${movie.title} - 720p`, size: '1.2 GB', tag: 'Good Encode', url: movie.download_720p },
-        movie.download_1080p && { quality: '1080p', name: `${movie.title} - 1080p`, size: '2.4 GB', tag: 'Good Encode', url: movie.download_1080p },
-        movie.download_2k && { quality: '4K', name: `${movie.title} - 4K UHD`, size: '5.8 GB', tag: 'Ultra HD', url: movie.download_2k },
-      ].filter(Boolean) as { quality: string; name: string; size: string; tag: string; url: string }[]
+        ...processLinks('480p', movie.download_480p, '480p'),
+        ...processLinks('720p', movie.download_720p, '720p'),
+        ...processLinks('1080p', movie.download_1080p, '1080p'),
+        ...processLinks('2k', movie.download_2k, '4K UHD'),
+      ]
     };
   },
   ['movie-details'],
-  { revalidate: 3600 } // Cache for 1 hour
+  { revalidate: 3600, tags: ['movie-details'] } // Cache for 1 hour
 );

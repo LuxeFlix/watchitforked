@@ -43,6 +43,7 @@ type DownloadLinkQuality = '480p' | '720p' | '1080p' | '2k'
 type DownloadLink = {
   quality: DownloadLinkQuality
   url: string
+  episode?: string
 }
 
 type StoredDraft = DraftState & {
@@ -70,6 +71,30 @@ function getEmptyDraft(): DraftState {
 function getInitialDraft(initialData?: Movie): DraftState {
   if (!initialData) return getEmptyDraft()
 
+  const parseLinks = (quality: DownloadLinkQuality, value: string | null): DownloadLink[] => {
+    if (!value) return []
+    try {
+      const parsed = JSON.parse(value)
+      if (Array.isArray(parsed)) {
+        return parsed.map((item: any) => ({
+          quality,
+          url: item.url || '',
+          episode: String(item.episode || '')
+        }))
+      }
+    } catch {
+      // Not JSON
+    }
+    return [{ quality, url: value, episode: '' }]
+  }
+
+  const allLinks = [
+    ...parseLinks('480p', initialData.download_480p),
+    ...parseLinks('720p', initialData.download_720p),
+    ...parseLinks('1080p', initialData.download_1080p),
+    ...parseLinks('2k', initialData.download_2k),
+  ]
+
   return {
     title: initialData.title ?? '',
     type: initialData.type ?? 'movie',
@@ -80,12 +105,7 @@ function getInitialDraft(initialData?: Movie): DraftState {
     genre: initialData.genre ?? [],
     description: initialData.description ?? '',
     tags: initialData.tags ?? [],
-    downloadLinks: [
-      { quality: '480p' as DownloadLinkQuality, url: initialData.download_480p ?? '' },
-      { quality: '720p' as DownloadLinkQuality, url: initialData.download_720p ?? '' },
-      { quality: '1080p' as DownloadLinkQuality, url: initialData.download_1080p ?? '' },
-      { quality: '2k' as DownloadLinkQuality, url: initialData.download_2k ?? '' },
-    ].filter((item) => item.url.trim().length > 0),
+    downloadLinks: allLinks.length > 0 ? allLinks : [getEmptyDownloadLink()],
     posterUrl: initialData.poster_url ?? '',
     sampleImages: initialData.sample_images ?? [],
     tagInput: '',
@@ -270,7 +290,7 @@ export default function MovieForm({ initialData }: MovieFormProps) {
   }
 
   function addDownloadLink(quality: DownloadLinkQuality) {
-    setDownloadLinks((current) => [...current, { quality, url: '' }])
+    setDownloadLinks((current) => [...current, { quality, url: '', episode: '' }])
     setQualityMenuOpen(false)
   }
 
@@ -336,29 +356,34 @@ export default function MovieForm({ initialData }: MovieFormProps) {
   }
 
   function mapDownloadLinks() {
-    return downloadLinks.reduce<{
-      download_480p: string | null
-      download_720p: string | null
-      download_1080p: string | null
-      download_2k: string | null
-    }>(
-      (acc, link) => {
-        const url = link.url.trim() || null
+    const groups = downloadLinks.reduce<Record<string, DownloadLink[]>>((acc, link) => {
+      const url = link.url.trim()
+      if (!url) return acc
+      if (!acc[link.quality]) acc[link.quality] = []
+      acc[link.quality].push(link)
+      return acc
+    }, {})
 
-        if (link.quality === '480p') acc.download_480p = url
-        if (link.quality === '720p') acc.download_720p = url
-        if (link.quality === '1080p') acc.download_1080p = url
-        if (link.quality === '2k') acc.download_2k = url
+    const process = (quality: string) => {
+      const links = groups[quality] || []
+      if (links.length === 0) return null
+      
+      // If it's a movie and only one link, store as string for backward compatibility
+      if (type === 'movie' && links.length === 1) return links[0].url.trim()
+      
+      // Otherwise store as JSON array
+      return JSON.stringify(links.map(l => ({
+        episode: l.episode || '',
+        url: l.url.trim()
+      })))
+    }
 
-        return acc
-      },
-      {
-        download_480p: null,
-        download_720p: null,
-        download_1080p: null,
-        download_2k: null,
-      }
-    )
+    return {
+      download_480p: process('480p'),
+      download_720p: process('720p'),
+      download_1080p: process('1080p'),
+      download_2k: process('2k'),
+    }
   }
 
   async function submit(nextStatus: Status) {
@@ -765,8 +790,20 @@ export default function MovieForm({ initialData }: MovieFormProps) {
           <div className="mt-4 space-y-3">
             {downloadLinks.map((link, index) => (
               <div key={`${link.quality}-${index}`} className="rounded-2xl border border-border bg-[#0a0a0a] p-3 sm:p-4">
-                <div className="grid gap-3 md:grid-cols-[160px_minmax(0,1fr)_auto] md:items-end">
-                  <div>
+                <div className={`grid gap-3 md:items-end ${type === 'series' ? 'grid-cols-2 md:grid-cols-[80px_140px_minmax(0,1fr)_auto]' : 'md:grid-cols-[160px_minmax(0,1fr)_auto]'}`}>
+                  {type === 'series' && (
+                    <div className="col-span-1">
+                      <label className="admin-field-label">Ep No</label>
+                      <input
+                        value={link.episode || ''}
+                        onChange={(e) => updateDownloadLink(index, { episode: e.target.value })}
+                        placeholder="01"
+                        className="admin-input mt-2"
+                      />
+                    </div>
+                  )}
+
+                  <div className="col-span-1">
                     <label className="admin-field-label">Quality</label>
                     <select
                       value={link.quality}
@@ -780,7 +817,7 @@ export default function MovieForm({ initialData }: MovieFormProps) {
                     </select>
                   </div>
 
-                  <div>
+                  <div className={type === 'series' ? 'col-span-2 md:col-span-1' : ''}>
                     <label className="admin-field-label">Link</label>
                     <input
                       value={link.url}
@@ -791,14 +828,16 @@ export default function MovieForm({ initialData }: MovieFormProps) {
                     />
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => removeDownloadLink(index)}
-                    className="admin-icon-btn h-11 w-11 self-end"
-                    aria-label={`Remove ${link.quality} link`}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className={type === 'series' ? 'col-span-2 md:col-span-1 flex justify-end' : ''}>
+                    <button
+                      type="button"
+                      onClick={() => removeDownloadLink(index)}
+                      className="admin-icon-btn h-11 w-11 self-end"
+                      aria-label={`Remove ${link.quality} link`}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -918,5 +957,5 @@ export default function MovieForm({ initialData }: MovieFormProps) {
 }
 
 function getEmptyDownloadLink(): DownloadLink {
-  return { quality: '720p', url: '' }
+  return { quality: '720p' as DownloadLinkQuality, url: '', episode: '' }
 }

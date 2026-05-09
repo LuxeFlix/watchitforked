@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Image from 'next/image'
 import { Loader2, Plus, Trash2, Upload } from 'lucide-react'
 
 type ImageValue = string | string[]
@@ -170,11 +171,16 @@ export default function ImageUploader({
               key={`${imageUrl}-${index}`}
               className="group relative overflow-hidden rounded-2xl border border-border bg-[#0a0a0a]"
             >
-              <img
-                src={imageUrl}
-                alt={`Uploaded image ${index + 1}`}
-                className={`w-full object-cover ${multiple ? 'aspect-[4/3]' : 'aspect-[3/4]'}`}
-              />
+              <div className={`relative w-full ${multiple ? 'aspect-[4/3]' : 'aspect-[3/4]'}`}>
+                <Image
+                  src={imageUrl}
+                  alt={`Uploaded image ${index + 1}`}
+                  fill
+                  priority={index === 0}
+                  sizes="(max-width: 768px) 100vw, 300px"
+                  className="object-cover"
+                />
+              </div>
 
               <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
                 <span className="truncate text-xs text-white/90">{imageUrl}</span>

@@ -1,4 +1,6 @@
 import { getAllMoviesAdmin, createMovie } from '@/lib/queries'
+import { revalidatePath } from 'next/cache'
+import { sendTelegramNotification } from '@/lib/telegram'
 
 export async function GET() {
   try {
@@ -25,6 +27,20 @@ export async function POST(request: Request) {
       description: typeof body.description === 'string' ? body.description : '',
       status: body.status || 'published',
     })
+
+    revalidatePath('/')
+
+    if (movie.status === 'published') {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+      const typeLabel = movie.type === 'series' ? 'Series' : 'Movie'
+      const message = `🎬 <b>New ${typeLabel} Uploaded!</b>\n\n` +
+        `<b>Title:</b> ${movie.title}\n` +
+        `<b>Year:</b> ${movie.year}\n` +
+        `<b>Quality:</b> ${movie.quality}\n\n` +
+        `<a href="${siteUrl}/movie/${movie.id}">👉 Click here to watch</a>`
+      
+      await sendTelegramNotification(message, movie.poster_url)
+    }
 
     return Response.json(movie, { status: 201 })
   } catch {

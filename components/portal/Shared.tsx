@@ -4,7 +4,7 @@ import { Search, ChevronLeft, Users, Play } from 'lucide-react';
 
 export function Header() {
   return (
-    <header className="bg-white border-b border-portal-border px-4 py-4 sticky top-0 z-50">
+    <header className="bg-white border-b border-portal-border px-4 py-4 top-0 z-50">
       <div className="max-w-4xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
@@ -13,6 +13,7 @@ export function Header() {
                   src="/watchit_logo.png" 
                   alt="Logo" 
                   fill 
+                  sizes="40px"
                   className="object-contain"
                 />
              </div>
@@ -68,6 +69,7 @@ export function Footer() {
                     src="/watchit_logo.png" 
                     alt="Logo" 
                     fill 
+                    sizes="32px"
                     className="object-contain"
                   />
                </div>

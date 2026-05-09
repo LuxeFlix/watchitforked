@@ -3,7 +3,7 @@ import { sql } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 
 const ADMIN_COOKIE_NAME = 'admin_session'
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
 
 export async function POST(request: Request) {
   try {

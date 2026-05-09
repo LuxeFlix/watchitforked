@@ -31,7 +31,7 @@ export default async function MoviePage({
   }, {} as Record<string, number>);
 
   const qualities = ['unsorted', '480p', '720p', '1080p', '4K'].filter(q => q === 'unsorted' || (qualityCounts[q] && qualityCounts[q] > 0));
-  const activeQuality = selectedQuality || (qualities.includes('720p') ? '720p' : qualities[0]);
+  const activeQuality = selectedQuality || 'unsorted';
 
   return (
     <div className="min-h-screen bg-portal-bg text-portal-text font-sans">
@@ -67,6 +67,7 @@ export default async function MoviePage({
                      src={movie.thumbnail} 
                      alt={movie.title}
                      fill
+                     priority
                      sizes="(max-width: 640px) 128px, 256px"
                      className="object-cover"
                    />
@@ -80,7 +81,7 @@ export default async function MoviePage({
                  <h1 className="text-3xl font-black tracking-tight">{movie.title}</h1>
                  <div className="flex items-center gap-4 text-xs font-bold text-portal-muted bg-white/50 w-fit px-4 py-2 rounded-lg border border-portal-border/50">
                     <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {movie.year}</span>
-                    <span className="flex items-center gap-1.5"><Monitor className="w-3.5 h-3.5" /> Movie</span>
+                    <span className="flex items-center gap-1.5 capitalize"><Monitor className="w-3.5 h-3.5" /> {movie.type}</span>
                     <span className="flex items-center gap-1.5 text-yellow-500"><Star className="w-3.5 h-3.5 fill-yellow-500" /> {movie.rating}</span>
                     <span className="text-portal-muted/60">({movie.votes} votes)</span>
                  </div>
