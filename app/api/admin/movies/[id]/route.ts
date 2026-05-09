@@ -103,10 +103,10 @@ export async function PUT(
         }
       }
 
-      message += `\nCheck out the latest updates and links below:\n` +
-                 `<a href="${siteUrl}/movie/${movie.id}">👉 Click here to watch</a>`
+      message += `\nCheck out the latest updates and links below:\n`
       
-      await sendTelegramNotification(message, movie.poster_url)
+      const linkUrl = `${siteUrl}/movie/${movie.id}`
+      await sendTelegramNotification(message, movie.poster_url, linkUrl)
     }
 
     return Response.json(movie)

@@ -1,4 +1,4 @@
-export async function sendTelegramNotification(message: string, posterUrl?: string) {
+export async function sendTelegramNotification(message: string, posterUrl?: string, linkUrl?: string) {
   const BOT_TOKEN = process.env.WATCHIT_TELEGRAM_BOT_TOKEN?.trim();
   const CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID?.trim();
 
@@ -27,6 +27,19 @@ export async function sendTelegramNotification(message: string, posterUrl?: stri
 
   console.log(`Cleaned Channel ID: "${cleanChannelId}"`);
 
+  let validLinkUrl = linkUrl;
+  if (validLinkUrl && validLinkUrl.includes('localhost')) {
+    // Telegram API rejects localhost URLs in inline keyboards.
+    // Replace with a dummy domain for local testing.
+    validLinkUrl = validLinkUrl.replace(/http:\/\/localhost:\d+/, 'https://your-site.com');
+  }
+
+  const replyMarkup = validLinkUrl ? {
+    inline_keyboard: [
+      [{ text: '👉 Click here to watch', url: validLinkUrl }]
+    ]
+  } : undefined;
+
   async function trySendPhoto() {
     if (!posterUrl) return false;
     try {
@@ -38,6 +51,7 @@ export async function sendTelegramNotification(message: string, posterUrl?: stri
           photo: posterUrl,
           caption: message,
           parse_mode: 'HTML',
+          ...(replyMarkup && { reply_markup: replyMarkup }),
         }),
       });
       if (response.ok) return true;
@@ -58,6 +72,7 @@ export async function sendTelegramNotification(message: string, posterUrl?: stri
           chat_id: parseInt(cleanChannelId, 10),
           text: message,
           parse_mode: 'HTML',
+          ...(replyMarkup && { reply_markup: replyMarkup }),
         }),
       });
       if (response.ok) return true;

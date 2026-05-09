@@ -37,9 +37,10 @@ export async function POST(request: Request) {
         `<b>Title:</b> ${movie.title}\n` +
         `<b>Year:</b> ${movie.year}\n` +
         `<b>Quality:</b> ${movie.quality}\n\n` +
-        `<a href="${siteUrl}/movie/${movie.id}">👉 Click here to watch</a>`
+        `Check out the latest updates and links below:`
       
-      await sendTelegramNotification(message, movie.poster_url)
+      const linkUrl = `${siteUrl}/movie/${movie.id}`
+      await sendTelegramNotification(message, movie.poster_url, linkUrl)
     }
 
     return Response.json(movie, { status: 201 })
