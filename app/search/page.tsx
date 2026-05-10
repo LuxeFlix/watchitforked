@@ -12,6 +12,7 @@ export default async function SearchPage(
   const page = Math.max(1, parseInt(sp.page || '1', 10));
   const type = sp.type;
   const genre = sp.genre;
+  const tag = sp.tag;
   const limit = 24;
 
   let movies = [];
@@ -26,6 +27,7 @@ export default async function SearchPage(
     const result = await getPublishedMovies({
       type,
       genre,
+      tag,
       page,
       limit,
       sort: sp.sort || 'newest'
@@ -35,10 +37,10 @@ export default async function SearchPage(
   }
 
   const totalPages = Math.ceil(total / limit);
-  const title = q ? `Search: ${q}` : (type || genre || 'All Content');
+  const title = q ? `Search: ${q}` : (type || genre || tag || 'All Content');
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-10">
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-10">
       <div className="space-y-2">
          <h1 className="text-3xl font-black tracking-tighter uppercase">{title}</h1>
          <div className="flex items-center justify-between text-[10px] font-bold text-portal-muted uppercase tracking-[0.2em]">
@@ -51,7 +53,7 @@ export default async function SearchPage(
       </div>
 
       {movies.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
           {movies.map((movie) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}

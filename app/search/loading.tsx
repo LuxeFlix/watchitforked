@@ -1,6 +1,6 @@
 export default function SearchLoading() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-10 animate-pulse">
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-pulse">
       {/* Title skeleton */}
       <div className="space-y-4">
          <div className="h-10 w-64 bg-white rounded-xl border border-portal-border" />
@@ -12,8 +12,8 @@ export default function SearchLoading() {
       </div>
 
       {/* Grid skeleton */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {Array.from({ length: 12 }).map((_, i) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+        {Array.from({ length: 18 }).map((_, i) => (
           <div key={i} className="bg-white border border-portal-border rounded-2xl overflow-hidden aspect-[2/3.5] space-y-4">
              <div className="aspect-[2/3] w-full bg-slate-100" />
              <div className="px-4 space-y-2">

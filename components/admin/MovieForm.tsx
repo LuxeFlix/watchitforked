@@ -697,55 +697,64 @@ export default function MovieForm({ initialData }: MovieFormProps) {
               <label className="admin-field-label">
                 Tags
               </label>
-              <p className="mt-1 text-xs text-text-secondary">Type a tag and press comma or Enter.</p>
+              <p className="mt-1 text-xs text-text-secondary">Select whether the series/movie is currently ongoing or completed.</p>
             </div>
-            <span className="text-xs text-text-secondary">{tags.length} tags</span>
           </div>
 
-          <div className="mt-3 rounded-xl border border-border bg-[#0a0a0a] px-3 py-2.5">
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="admin-pill admin-pill-neutral"
-                >
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => setTags((current) => current.filter((item) => item !== tag))}
-                    className="text-text-secondary transition-colors hover:text-text-primary"
-                    aria-label={`Remove ${tag}`}
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              ))}
-
-              <input
-                value={tagInput}
-                onChange={(e) => {
-                  const value = e.target.value
-
-                  if (value.includes(',')) {
-                    const parts = value.split(',')
-                    setTagInput(parts.pop() || '')
-                    addTagsFromInput(parts.join(','))
-                    return
-                  }
-
-                  setTagInput(value)
-                }}
-                onBlur={() => addTagsFromInput(tagInput)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ',') {
-                    event.preventDefault()
-                    addTagsFromInput(tagInput)
-                  }
-                }}
-                placeholder={tags.length === 0 ? 'Add tags...' : ''}
-                className="min-w-[120px] flex-1 bg-transparent px-1 py-1 text-sm outline-none placeholder:text-text-secondary sm:min-w-[140px]"
+          <div className="mt-4 flex flex-wrap gap-3">
+            <label 
+              className={`flex items-center justify-center px-5 py-2.5 rounded-xl border cursor-pointer transition-all ${
+                tags.includes('ongoing') 
+                  ? 'bg-portal-accent/10 border-portal-accent text-portal-accent shadow-[0_0_15px_rgba(var(--portal-accent),0.1)]' 
+                  : 'bg-[#0a0a0a] border-border text-text-secondary hover:border-text-secondary/50 hover:text-text-primary'
+              }`}
+            >
+              <input 
+                type="radio" 
+                name="status_tag" 
+                value="ongoing"
+                checked={tags.includes('ongoing')}
+                onChange={() => setTags(['ongoing'])}
+                className="hidden"
               />
-            </div>
+              <span className="text-sm font-bold tracking-wide uppercase">Ongoing</span>
+            </label>
+            
+            <label 
+              className={`flex items-center justify-center px-5 py-2.5 rounded-xl border cursor-pointer transition-all ${
+                tags.includes('completed') 
+                  ? 'bg-portal-accent/10 border-portal-accent text-portal-accent shadow-[0_0_15px_rgba(var(--portal-accent),0.1)]' 
+                  : 'bg-[#0a0a0a] border-border text-text-secondary hover:border-text-secondary/50 hover:text-text-primary'
+              }`}
+            >
+              <input 
+                type="radio" 
+                name="status_tag" 
+                value="completed"
+                checked={tags.includes('completed')}
+                onChange={() => setTags(['completed'])}
+                className="hidden"
+              />
+              <span className="text-sm font-bold tracking-wide uppercase">Completed</span>
+            </label>
+
+            <label 
+              className={`flex items-center justify-center px-5 py-2.5 rounded-xl border cursor-pointer transition-all ${
+                tags.length === 0 || (!tags.includes('ongoing') && !tags.includes('completed'))
+                  ? 'bg-white/5 border-white/20 text-white shadow-sm' 
+                  : 'bg-[#0a0a0a] border-border text-text-secondary hover:border-text-secondary/50 hover:text-text-primary'
+              }`}
+            >
+              <input 
+                type="radio" 
+                name="status_tag" 
+                value="none"
+                checked={tags.length === 0 || (!tags.includes('ongoing') && !tags.includes('completed'))}
+                onChange={() => setTags([])}
+                className="hidden"
+              />
+              <span className="text-sm font-bold tracking-wide uppercase">None</span>
+            </label>
           </div>
           <FieldError message={errors.tags} />
         </section>

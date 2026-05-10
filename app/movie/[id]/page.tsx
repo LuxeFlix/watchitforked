@@ -121,22 +121,24 @@ export default async function MoviePage({
               <h2 className="text-lg font-black tracking-tight">Available Downloads</h2>
               
               {/* Quality Tabs */}
-              <div className="flex items-center gap-1 p-1 bg-portal-border/30 rounded-xl w-fit">
-                 {qualities.map(q => (
-                    <Link 
-                      key={q} 
-                      href={`?quality=${q}`}
-                      scroll={false}
-                      className={cn(
-                        "px-6 py-2 rounded-lg text-xs font-bold transition-all",
-                        activeQuality === q 
-                          ? "bg-portal-text text-white shadow-md" 
-                          : "text-portal-muted hover:text-portal-text"
-                      )}
-                    >
-                        {q}({q === 'unsorted' ? movie.downloads.length : (qualityCounts[q] || 0)})
-                    </Link>
-                 ))}
+              <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                <div className="flex items-center gap-1 p-1 bg-portal-border/30 rounded-xl w-max">
+                   {qualities.map(q => (
+                      <Link 
+                        key={q} 
+                        href={`?quality=${q}`}
+                        scroll={false}
+                        className={cn(
+                          "px-6 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap",
+                          activeQuality === q 
+                            ? "bg-portal-text text-white shadow-md" 
+                            : "text-portal-muted hover:text-portal-text"
+                        )}
+                      >
+                          {q}({q === 'unsorted' ? movie.downloads.length : (qualityCounts[q] || 0)})
+                      </Link>
+                   ))}
+                </div>
               </div>
 
               {/* Search & Filter within Downloads */}

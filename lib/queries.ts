@@ -9,6 +9,7 @@ export async function getPublishedMovies(filters?: {
   sort?: string;
   page?: number;
   limit?: number;
+  tag?: string;
 }): Promise<{ movies: Movie[]; total: number }> {
   let where = "WHERE status = 'published'";
   const params: string[] = [];
@@ -33,6 +34,12 @@ export async function getPublishedMovies(filters?: {
     paramCount++;
     where += ` AND quality = $${paramCount}`;
     params.push(filters.quality);
+  }
+  if (filters?.tag && filters.tag.toLowerCase() !== 'all') {
+    paramCount++;
+    // Case-insensitive array search
+    where += ` AND EXISTS (SELECT 1 FROM unnest(tags) AS t WHERE t ILIKE $${paramCount})`;
+    params.push(filters.tag);
   }
 
   const countResult = await sql.query(`SELECT COUNT(*) FROM movies ${where}`, params);
