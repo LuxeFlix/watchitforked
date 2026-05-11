@@ -48,7 +48,7 @@ export default async function MoviePage({
         {/* 3. Banner & Overlay */}
         <div className="space-y-8">
            <div className="relative rounded-2xl overflow-hidden shadow-lg border border-portal-border bg-white group">
-              <div className="relative aspect-[21/9] w-full">
+              <div className="relative aspect-[7/9] sm:aspect-[21/9] w-full">
                  <Image 
                     src={movie.bannerImage} 
                     alt={movie.title}
