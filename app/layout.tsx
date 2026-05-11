@@ -19,6 +19,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head />
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-20SD6VSG3S" />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){window.dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-20SD6VSG3S');`,
+        }}
+      />
       <body className={`${inter.className} bg-portal-bg text-portal-text antialiased`}>
         <Suspense fallback={<div />}> 
           <SiteShell>{children}</SiteShell>
