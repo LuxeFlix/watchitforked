@@ -1,11 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getMovieDetails } from '@/lib/api';
-import { Search, ChevronLeft, Star, Download, Calendar, Monitor, Users, Settings2, Info } from 'lucide-react';
+import { ChevronLeft, Star, Calendar, Monitor, Users, Info } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Badge from '@/components/Badge';
-import { Suspense } from 'react';
-import { cn } from '@/lib/utils';
+import DownloadSection from '@/components/portal/DownloadSection';
 
 /**
  * Movie Detail Page - Overhauled to match the provided reference UI.
@@ -117,76 +116,7 @@ export default async function MoviePage({
            </div>
 
            {/* 7. Available Downloads */}
-           <div className="space-y-6">
-              <h2 className="text-lg font-black tracking-tight">Available Downloads</h2>
-              
-              {/* Quality Tabs */}
-              <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                <div className="flex items-center gap-1 p-1 bg-portal-border/30 rounded-xl w-max">
-                   {qualities.map(q => (
-                      <Link 
-                        key={q} 
-                        href={`?quality=${q}`}
-                        scroll={false}
-                        className={cn(
-                          "px-6 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap",
-                          activeQuality === q 
-                            ? "bg-portal-text text-white shadow-md" 
-                            : "text-portal-muted hover:text-portal-text"
-                        )}
-                      >
-                          {q}({q === 'unsorted' ? movie.downloads.length : (qualityCounts[q] || 0)})
-                      </Link>
-                   ))}
-                </div>
-              </div>
-
-              {/* Search & Filter within Downloads */}
-              <div className="flex gap-2">
-                 <div className="flex-1 relative">
-                    <input 
-                      type="text" 
-                      placeholder="Search files (e.g. BluRay, WEB-D)" 
-                      className="w-full bg-white border border-portal-border rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none"
-                    />
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-portal-muted" />
-                 </div>
-                 <button className="flex items-center gap-2 bg-white border border-portal-border px-4 py-2 rounded-xl text-xs font-bold text-portal-muted">
-                    Size
-                    <Settings2 className="w-4 h-4" />
-                 </button>
-              </div>
-
-              {/* Download Cards */}
-              <Suspense fallback={<div className="h-64 bg-white animate-pulse rounded-2xl" />}>
-                 <div className="space-y-3">
-                    {movie.downloads.filter(d => activeQuality === 'unsorted' || d.quality === activeQuality).map((dl, i) => (
-                       <div key={i} className="bg-white border border-portal-border rounded-2xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
-                          <div className="space-y-1">
-                             <h4 className="text-sm font-bold leading-tight">{dl.name}</h4>
-                          </div>
-                          <div className="flex items-center justify-between">
-                             <div className="flex items-center gap-3">
-                                <span className="text-xs font-bold text-portal-muted/60 tracking-wider uppercase">{dl.size || '952.42 MB'}</span>
-                                <div className="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-200">
-                                   Good Encode
-                                </div>
-                             </div>
-                             <Link 
-                                href={dl.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-portal-text text-white flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-portal-accent transition-colors"
-                             >
-                                <Download className="w-4 h-4" />
-                                Download
-                             </Link>
-                          </div>
-                       </div>
-                    ))}
-                 </div>
-              </Suspense>
-           </div>
+           <DownloadSection downloads={movie.downloads} />
         </div>
       </main>
 

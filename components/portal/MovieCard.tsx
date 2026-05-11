@@ -18,10 +18,12 @@ export default function MovieCard({ movie, priority }: { movie: Movie, priority?
           sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 224px"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute top-2 right-2 flex flex-col gap-1">
-           <div className="bg-portal-accent text-white px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-sm">
-              {movie.quality || 'HD'}
-           </div>
+        <div className="absolute top-2 left-2">
+           {movie.language && (
+             <div className="bg-white text-black px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-sm max-w-[60px] truncate">
+                {movie.language}
+             </div>
+           )}
         </div>
       </div>
 

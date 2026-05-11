@@ -486,7 +486,7 @@ export default function MovieForm({ initialData }: MovieFormProps) {
   }
 
   return (
-    <form onSubmit={handleFormSubmit} className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
+    <form onSubmit={handleFormSubmit} className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start xl:grid-cols-[minmax(0,1fr)_360px]">
       <div className="space-y-5 md:space-y-6">
         {draftBanner ? (
           <div className="admin-panel border-amber-500/20 bg-amber-500/10 p-4 text-amber-100">
@@ -889,7 +889,7 @@ export default function MovieForm({ initialData }: MovieFormProps) {
         </section>
       </div>
 
-      <aside className="space-y-5 lg:sticky lg:top-6 lg:self-start">
+      <aside className="space-y-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:self-start">
         <div className="admin-panel p-4 sm:p-5">
           <h2 className="text-sm font-semibold text-text-primary">Save actions</h2>
           <p className="mt-2 text-sm leading-6 text-text-secondary">
