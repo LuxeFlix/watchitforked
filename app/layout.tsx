@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
+import RichAds from '@/components/RichAds';
 import './globals.css';
 import SiteShell from '@/components/SiteShell';
 import React, { Suspense } from 'react';
@@ -29,6 +30,7 @@ gtag('js', new Date());
 gtag('config', 'G-20SD6VSG3S');`,
         }}
       />
+      <RichAds />
       <body className={`${inter.className} bg-portal-bg text-portal-text antialiased`}>
         <Suspense fallback={<div />}> 
           <SiteShell>{children}</SiteShell>
