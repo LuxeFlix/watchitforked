@@ -77,10 +77,10 @@ export default function DownloadSection({ downloads }: DownloadSectionProps) {
           />
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-portal-muted" />
         </div>
-        <button className="flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-portal-border bg-white px-3 py-2 text-xs font-bold text-portal-muted sm:px-4">
+        {/* <button className="flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-portal-border bg-white px-3 py-2 text-xs font-bold text-portal-muted sm:px-4">
           Size
           <Settings2 className="h-4 w-4" />
-        </button>
+        </button> */}
       </div>
 
       <div className="space-y-3">
