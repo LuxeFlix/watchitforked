@@ -25,12 +25,12 @@ export default function RootLayout({
       <script
         dangerouslySetInnerHTML={{
           __html: `window.dataLayer = window.dataLayer || [];
-function gtag(){window.dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-20SD6VSG3S');`,
+                  function gtag(){window.dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', 'G-20SD6VSG3S');`,
         }}
       />
-      <RichAds />
+      {/* <RichAds /> */}
       <body className={`${inter.className} bg-portal-bg text-portal-text antialiased`}>
         <Suspense fallback={<div />}> 
           <SiteShell>{children}</SiteShell>
