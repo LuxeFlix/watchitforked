@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
+import Script from 'next/script';
 import RichAds from '@/components/RichAds';
 import './globals.css';
 import SiteShell from '@/components/SiteShell';
@@ -21,17 +22,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-20SD6VSG3S" />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `window.dataLayer = window.dataLayer || [];
-                  function gtag(){window.dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', 'G-20SD6VSG3S');`,
-        }}
-      />
       {/* <RichAds /> */}
       <body className={`${inter.className} bg-portal-bg text-portal-text antialiased`}>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-20SD6VSG3S"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-20SD6VSG3S');`}
+        </Script>
         <Suspense fallback={<div />}> 
           <SiteShell>{children}</SiteShell>
         </Suspense>
