@@ -7,14 +7,14 @@ export function Header() {
     <header className="bg-white border-b border-portal-border px-4 py-2 sm:py-3 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
         <div className="flex items-center justify-between w-full sm:w-auto shrink-0">
-          <Link href="/" className="flex items-center gap-2">
-             <div className="relative w-8 h-8 sm:w-9 sm:h-9">
+           <Link href="/" className="flex items-center leading-none shrink-0">
+             <div className="relative w-24 h-8 sm:w-28 sm:h-9 overflow-visible">
                 <Image 
-                  src="/watchit_logo.png" 
+                  src="/dramaflix_ico.png" 
                   alt="Logo" 
                   fill 
-                  sizes="36px"
-                  className="object-contain"
+                sizes="112px"
+                className="object-contain object-left scale-125 origin-left"
                 />
              </div>
           </Link>
@@ -74,7 +74,7 @@ export function Footer() {
             <Link href="/" className="flex items-center gap-2">
                <div className="relative w-8 h-8">
                   <Image 
-                    src="/watchit_logo.png" 
+                    src="/dramaflix_ico.png" 
                     alt="Logo" 
                     fill 
                     sizes="32px"

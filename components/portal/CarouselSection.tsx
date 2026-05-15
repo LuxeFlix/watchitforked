@@ -32,7 +32,7 @@ export default function CarouselSection({
         )}
       </div>
       
-      <div className="flex overflow-x-auto pb-6 pt-2 gap-3 sm:gap-5 snap-x snap-mandatory scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div className="flex overflow-x-auto pb-6 pt-2 gap-3 sm:gap-5 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {movies.map((movie, index) => (
           <div key={movie.id} className="snap-start shrink-0 w-[120px] sm:w-[150px] md:w-[180px]">
             <MovieCard movie={movie} priority={index < 4} />

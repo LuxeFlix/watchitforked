@@ -8,6 +8,7 @@ export default async function HomePage() {
 
   // Fetch all sections in parallel
   const [
+    { movies: newest },
     { movies: ongoing },
     { movies: completed },
     { movies: movies },
@@ -16,6 +17,7 @@ export default async function HomePage() {
     { movies: thriller },
     { movies: action }
   ] = await Promise.all([
+    getPublishedMovies({ limit }),
     getPublishedMovies({ tag: 'ongoing', limit }),
     getPublishedMovies({ tag: 'completed', limit }),
     getPublishedMovies({ type: 'movie', limit }),
@@ -31,6 +33,10 @@ export default async function HomePage() {
       
 
       <div className="space-y-12 sm:space-y-16">
+        <CarouselSection 
+          title="Newest" 
+          movies={newest}
+        />
         <CarouselSection 
           title="Ongoing" 
           movies={ongoing} 

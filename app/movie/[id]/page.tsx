@@ -5,6 +5,7 @@ import { ChevronLeft, Star, Calendar, Monitor, Users, Info } from 'lucide-react'
 import { notFound } from 'next/navigation';
 import Badge from '@/components/Badge';
 import DownloadSection from '@/components/portal/DownloadSection';
+import ViewTracker from '@/components/ViewTracker';
 
 /**
  * Movie Detail Page - Overhauled to match the provided reference UI.
@@ -82,7 +83,7 @@ export default async function MoviePage({
                     <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {movie.year}</span>
                     <span className="flex items-center gap-1.5 capitalize"><Monitor className="w-3.5 h-3.5" /> {movie.type}</span>
                     <span className="flex items-center gap-1.5 text-yellow-500"><Star className="w-3.5 h-3.5 fill-yellow-500" /> {movie.rating}</span>
-                    <span className="text-portal-muted/60">({movie.votes} votes)</span>
+                    <span className="flex items-center gap-1.5 text-portal-muted"><Users className="w-3.5 h-3.5" /> {movie.views?.toLocaleString()} views</span>
                  </div>
               </div>
 
@@ -120,7 +121,7 @@ export default async function MoviePage({
         </div>
       </main>
 
-      
+      <ViewTracker movieId={parseInt(id)} />
     </div>
   );
 }

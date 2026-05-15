@@ -45,7 +45,7 @@ export const getMovieDetails = unstable_cache(
       title: movie.title,
       year: movie.year,
       rating: movie.rating || 8.5,
-      votes: movie.votes || 1250,
+      views: movie.views || 0,
       description: movie.description,
       genres: movie.genre || [],
       bannerImage: movie.sample_images?.[0] || movie.poster_url,
