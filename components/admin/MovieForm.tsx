@@ -8,7 +8,7 @@ import ImageUploader from './ImageUploader'
 import { Movie } from '@/types'
 
 const GENRES = ['Action', 'Comedy', 'Drama', 'Thriller', 'Horror', 'Romance', 'Sci-Fi', 'Animation']
-const LANGUAGES = ['Hindi', 'English', 'Tamil', 'Telugu', 'Bengali', 'Other']
+const LANGUAGES = ['Hindi', 'English', 'Tamil', 'Thai', 'Korean', 'Chinese', 'Japanese', 'French', 'German', 'Spanish', 'Other']
 const QUALITIES = ['2K', '1080p', '720p', '520p', '480p', 'CAM']
 
 type Status = 'draft' | 'published'
