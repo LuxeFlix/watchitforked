@@ -8,13 +8,14 @@ export function Header() {
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6">
         <div className="flex items-center justify-between w-full sm:w-auto shrink-0">
            <Link href="/" className="flex items-center leading-none shrink-0">
-             <div className="relative w-24 h-8 sm:w-28 sm:h-9 overflow-visible">
+             <div className="relative w-32 h-10 sm:w-36 sm:h-12 overflow-visible">
                 <Image 
                   src="/dramaflix_ico.png" 
                   alt="Logo" 
                   fill 
-                sizes="112px"
-                className="object-contain object-left scale-125 origin-left"
+                  loading="eager"
+              sizes="144px"
+               className="object-contain object-left scale-150 origin-left"
                 />
              </div>
           </Link>
@@ -64,7 +65,7 @@ export function Header() {
 }
 
 export function Footer() {
-  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'T4TSA';
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'DramaFlix';
   
   return (
     <footer className="bg-white border-t border-portal-border py-16 px-4 mt-20">
@@ -72,18 +73,16 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left">
             <Link href="/" className="flex items-center gap-2">
-               <div className="relative w-8 h-8">
+               <div className="relative w-16 h-16 sm:w-20 sm:h-20">
                   <Image 
                     src="/dramaflix_ico.png" 
                     alt="Logo" 
                     fill 
-                    sizes="32px"
+                    sizes="80px"
                     className="object-contain"
                   />
                </div>
-               <span className="text-lg font-black tracking-tighter">
-                  {siteName.toUpperCase()}<span className="text-portal-accent">.CC</span>
-               </span>
+               
             </Link>
             <p className="text-sm text-portal-muted max-w-xs font-medium">
               Your ultimate destination for movies and TV shows. Stream thousands of titles directly with no subscriptions.
@@ -92,18 +91,19 @@ export function Footer() {
           
           <div className="flex flex-wrap justify-center gap-8 text-xs font-bold uppercase tracking-wider">
             <Link href="/search" className="text-portal-text hover:text-portal-accent transition-colors">Browse</Link>
-            <Link href="#" className="text-portal-text hover:text-portal-accent transition-colors">Movies</Link>
-            <Link href="#" className="text-portal-text hover:text-portal-accent transition-colors">Series</Link>
-            <Link href="#" className="text-portal-text hover:text-portal-accent transition-colors">DMCA</Link>
+            <Link href="/search?type=movie" className="text-portal-text hover:text-portal-accent transition-colors">Movies</Link>
+            <Link href="/search?type=series" className="text-portal-text hover:text-portal-accent transition-colors">Series</Link>
+            <Link href="/search?type=anime" className="text-portal-text hover:text-portal-accent transition-colors">Anime</Link>
           </div>
         </div>
         
         <div className="mt-16 pt-8 border-t border-portal-border/50 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold text-portal-muted uppercase tracking-widest">
           <div>&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</div>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-portal-accent transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-portal-accent transition-colors">Terms</Link>
-            <Link href="#" className="hover:text-portal-accent transition-colors">Contact</Link>
+            <Link href="/privacy" className="hover:text-portal-accent transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-portal-accent transition-colors">Terms</Link>
+            <Link href="/dmca" className="hover:text-portal-accent transition-colors">DMCA</Link>
+            <Link href="/contact" className="hover:text-portal-accent transition-colors">Contact</Link>
           </div>
         </div>
       </div>
