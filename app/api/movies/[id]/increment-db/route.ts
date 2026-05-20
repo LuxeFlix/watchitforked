@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { incrementViews } from '@/lib/queries';
-import { revalidateTag } from 'next/cache';
+import { updateTag } from 'next/cache';
 
 // This is a Node.js runtime endpoint for database persistence
 // Called after Redis deduplication confirms it's a new view
@@ -19,7 +19,7 @@ export async function POST(
 
     // Update database
     await incrementViews(id);
-    revalidateTag('movie-details');
+    updateTag('movie-details');
     
     return NextResponse.json({ success: true });
   } catch (error) {
