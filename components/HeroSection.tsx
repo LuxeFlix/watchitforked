@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Badge from './Badge';
 import { Movie } from '@/types';
 import { Play } from 'lucide-react';
+import LoadingImage from './portal/LoadingImage';
 
 interface HeroSectionProps {
   movie: Movie;
@@ -14,10 +15,14 @@ export default function HeroSection({ movie }: HeroSectionProps) {
     <section className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden flex items-center animate-fade-in">
       {/* Background with Blur */}
       <div className="absolute inset-0 z-0">
-        <img
+        <LoadingImage
           src={`${movie.poster_url}?w=1200&q=auto&f=auto`}
           alt=""
-          className="w-full h-full object-cover blur-2xl scale-110 opacity-30"
+          fill
+          eager={false}
+          sizes="100vw"
+          wrapperClassName="absolute inset-0"
+          className="object-cover blur-2xl scale-110 opacity-30"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
       </div>
@@ -25,11 +30,15 @@ export default function HeroSection({ movie }: HeroSectionProps) {
       <div className="max-w-7xl mx-auto px-6 w-full z-10">
         <div className="flex flex-col md:flex-row items-center md:items-end gap-8">
           {/* Main Poster */}
-          <div className="hidden md:block w-64 aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border border-border">
-            <img
+          <div className="relative hidden md:block w-64 aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border border-border">
+            <LoadingImage
               src={`${movie.poster_url}?w=400&q=auto&f=auto`}
               alt={movie.title}
-              className="w-full h-full object-cover"
+              fill
+              eager
+              sizes="256px"
+              wrapperClassName="absolute inset-0"
+              className="object-cover"
             />
           </div>
 

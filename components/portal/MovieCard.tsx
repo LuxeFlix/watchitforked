@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Star, Calendar, Monitor } from 'lucide-react';
 import { Movie } from '@/types';
+import LoadingImage from './LoadingImage';
 
 export default function MovieCard({ movie, priority }: { movie: Movie, priority?: boolean }) {
   return (
@@ -10,12 +10,12 @@ export default function MovieCard({ movie, priority }: { movie: Movie, priority?
       className="group bg-white border border-portal-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col"
     >
       <div className="relative aspect-[2/3] w-full overflow-hidden">
-        <Image 
+        <LoadingImage 
           src={movie.poster_url} 
           alt={movie.title}
           fill
-          priority={priority}
           sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 224px"
+          wrapperClassName="absolute inset-0"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute top-2 left-2">

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Search, ChevronLeft, Users, Play } from 'lucide-react';
+import LoadingImage from './LoadingImage';
 
 export function Header() {
   return (
@@ -9,13 +9,14 @@ export function Header() {
         <div className="flex items-center justify-between w-full sm:w-auto shrink-0">
            <Link href="/" className="flex items-center leading-none shrink-0">
              <div className="relative w-32 h-10 sm:w-36 sm:h-12 overflow-visible">
-                <Image 
+               <LoadingImage 
                   src="/dramaflix_ico.png" 
                   alt="Logo" 
                   fill 
-                  loading="eager"
-              sizes="144px"
-               className="object-contain object-left scale-150 origin-left"
+                eager
+                sizes="144px"
+                wrapperClassName="absolute inset-0"
+                className="object-contain object-left scale-150 origin-left"
                 />
              </div>
           </Link>
@@ -74,11 +75,13 @@ export function Footer() {
           <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left">
             <Link href="/" className="flex items-center gap-2">
                <div className="relative w-16 h-16 sm:w-20 sm:h-20">
-                  <Image 
+                  <LoadingImage 
                     src="/dramaflix_ico.png" 
                     alt="Logo" 
                     fill 
+                    eager
                     sizes="80px"
+                    wrapperClassName="absolute inset-0"
                     className="object-contain"
                   />
                </div>

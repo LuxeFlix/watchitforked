@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { getMovieDetails } from '@/lib/api';
 import { ChevronLeft, Star, Calendar, Monitor, Users, Info } from 'lucide-react';
@@ -6,6 +5,7 @@ import { notFound } from 'next/navigation';
 import Badge from '@/components/Badge';
 import DownloadSection from '@/components/portal/DownloadSection';
 import ViewTracker from '@/components/ViewTracker';
+import LoadingImage from '@/components/portal/LoadingImage';
 
 /**
  * Movie Detail Page - Overhauled to match the provided reference UI.
@@ -49,12 +49,13 @@ export default async function MoviePage({
         <div className="space-y-8">
            <div className="relative rounded-2xl overflow-hidden shadow-lg border border-portal-border bg-white group">
               <div className="relative aspect-[7/9] sm:aspect-[21/9] w-full">
-                 <Image 
+                 <LoadingImage 
                     src={movie.bannerImage} 
                     alt={movie.title}
                     fill
-                    priority
+                    eager
                     sizes="(max-width: 1024px) 100vw, 896px"
+                    wrapperClassName="absolute inset-0"
                     className="object-cover"
                  />
                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -63,12 +64,13 @@ export default async function MoviePage({
               {/* Overlap Thumbnail */}
               <div className="absolute bottom-4 left-4 w-full px-4 flex items-end">
                 <div className="relative w-32 sm:w-64 aspect-[2/1] rounded-xl overflow-hidden shadow-2xl border-2 border-white transform translate-y-8">
-                   <Image 
+                            <LoadingImage 
                      src={movie.thumbnail} 
                      alt={movie.title}
                      fill
-                     priority
+                        eager
                      sizes="(max-width: 640px) 128px, 256px"
+                               wrapperClassName="absolute inset-0"
                      className="object-cover"
                    />
                 </div>
