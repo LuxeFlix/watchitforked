@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import Script from 'next/script';
 import RichAds from '@/components/RichAds';
+import MonetagSideBanners from '@/components/ads/MonetagSideBanners';
 import './globals.css';
 import SiteShell from '@/components/SiteShell';
 import React, { Suspense } from 'react';
@@ -24,6 +25,7 @@ export default function RootLayout({
       <head />
       {/* <RichAds /> */}
       <body className={`${inter.className} bg-portal-bg text-portal-text antialiased`}>
+        <MonetagSideBanners />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-20SD6VSG3S"
           strategy="afterInteractive"
