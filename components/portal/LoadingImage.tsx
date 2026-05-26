@@ -19,26 +19,41 @@ export default function LoadingImage({
   onLoad,
   ...props
 }: LoadingImageProps) {
-  const [loaded, setLoaded] = useState(false);
+  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const isPriority = eager || props.priority === true;
 
   useEffect(() => {
-    setLoaded(false);
+    setStatus('loading');
   }, [src]);
 
   return (
     <div className={wrapperClassName}>
-      {!loaded && <div className={`absolute inset-0 animate-pulse rounded-[inherit] ${skeletonClassName}`} aria-hidden="true" />}
+      {status !== 'loaded' && (
+        <div
+          className={`absolute inset-0 rounded-[inherit] ${status === 'error' ? 'bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200' : `animate-pulse ${skeletonClassName}`}`}
+          aria-hidden="true"
+        />
+      )}
       <Image
         {...props}
-        loading={eager ? 'eager' : props.loading}
+        loading={isPriority ? 'eager' : props.loading}
         src={src}
         alt={alt}
         onLoad={(event) => {
-          setLoaded(true);
+          setStatus('loaded');
           onLoad?.(event);
         }}
-        className={`${className ?? ''} transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`.trim()}
+        onError={(event) => {
+          setStatus('error');
+          props.onError?.(event);
+        }}
+        className={`${className ?? ''} transition-opacity duration-300 ${status === 'loaded' ? 'opacity-100' : 'opacity-0'}`.trim()}
       />
+      {status === 'error' && (
+        <div className="absolute inset-0 flex items-center justify-center rounded-[inherit] bg-gradient-to-br from-slate-200 via-white to-slate-100 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">
+          Failed to load
+        </div>
+      )}
     </div>
   );
 }

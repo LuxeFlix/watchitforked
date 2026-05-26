@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { incrementViews } from '@/lib/queries';
-import { updateTag } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 export async function POST(
   request: NextRequest,
@@ -15,7 +15,7 @@ export async function POST(
     }
 
     await incrementViews(id);
-    updateTag('movie-details');
+    revalidateTag('movie-details', 'default');
     return NextResponse.json({ counted: true });
   } catch (error) {
     console.error('Error incrementing views:', error);

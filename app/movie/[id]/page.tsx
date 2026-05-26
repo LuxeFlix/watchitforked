@@ -1,11 +1,30 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getMovieDetails } from '@/lib/api';
 import { ChevronLeft, Star, Calendar, Monitor, Users, Info } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Badge from '@/components/Badge';
+import MonetagSideBanners from '@/components/ads/MonetagSideBanners';
 import DownloadSection from '@/components/portal/DownloadSection';
 import ViewTracker from '@/components/ViewTracker';
 import LoadingImage from '@/components/portal/LoadingImage';
+
+export async function generateMetadata({
+   params,
+}: {
+   params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+   const { id } = await params;
+   const movie = await getMovieDetails(id);
+
+   if (!movie) {
+      return {};
+   }
+
+   return {
+      title: movie.title,
+   };
+}
 
 /**
  * Movie Detail Page - Overhauled to match the provided reference UI.
@@ -35,92 +54,75 @@ export default async function MoviePage({
 
   return (
     <div className="min-h-screen bg-portal-bg text-portal-text font-sans">
-      {/* 1. Header Area */}
-      
-
-      <main className="max-w-4xl mx-auto px-4 py-8 space-y-10">
-        {/* 2. Back Button */}
-        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-portal-muted hover:text-portal-text transition-colors">
+         <MonetagSideBanners />
+         <main className="max-w-6xl mx-auto px-4 py-8 space-y-8 lg:space-y-10">
+            <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold text-portal-muted hover:text-portal-text transition-colors">
            <ChevronLeft className="w-4 h-4" />
            Back
         </Link>
 
-        {/* 3. Banner & Overlay */}
-        <div className="space-y-8">
-           <div className="relative rounded-2xl overflow-hidden shadow-lg border border-portal-border bg-white group">
-              <div className="relative aspect-[7/9] sm:aspect-[21/9] w-full">
-                 <LoadingImage 
-                    src={movie.bannerImage} 
-                    alt={movie.title}
-                    fill
-                    eager
-                    sizes="(max-width: 1024px) 100vw, 896px"
-                    wrapperClassName="absolute inset-0"
-                    className="object-cover"
-                 />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-              </div>
-              
-              {/* Overlap Thumbnail */}
-              <div className="absolute bottom-4 left-4 w-full px-4 flex items-end">
-                <div className="relative w-32 sm:w-64 aspect-[2/1] rounded-xl overflow-hidden shadow-2xl border-2 border-white transform translate-y-8">
-                            <LoadingImage 
-                     src={movie.thumbnail} 
-                     alt={movie.title}
-                     fill
-                        eager
-                     sizes="(max-width: 640px) 128px, 256px"
-                               wrapperClassName="absolute inset-0"
-                     className="object-cover"
-                   />
-                </div>
-              </div>
-           </div>
+            <section className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)] items-start">
+               <div className="space-y-4 lg:sticky lg:top-24">
+                  <div className="relative overflow-hidden rounded-3xl border border-portal-border bg-white shadow-[0_24px_70px_rgba(15,23,42,0.12)]">
+                     <div className="relative aspect-[2/3] w-full">
+                        <LoadingImage 
+                           src={movie.poster_url || movie.bannerImage} 
+                           alt={movie.title}
+                           fill
+                           eager
+                           priority
+                           sizes="(max-width: 1024px) 100vw, 380px"
+                           wrapperClassName="absolute inset-0"
+                           className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+                     </div>
+                  </div>
 
-           {/* 4. Movie Info */}
-           <div className="pt-8 space-y-6">
-              <div className="space-y-2">
-                 <h1 className="text-3xl font-black tracking-tight">{movie.title}</h1>
-                 <div className="flex items-center gap-4 text-xs font-bold text-portal-muted bg-white/50 w-fit px-4 py-2 rounded-lg border border-portal-border/50">
-                    <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {movie.year}</span>
-                    <span className="flex items-center gap-1.5 capitalize"><Monitor className="w-3.5 h-3.5" /> {movie.type}</span>
-                    <span className="flex items-center gap-1.5 text-yellow-500"><Star className="w-3.5 h-3.5 fill-yellow-500" /> {movie.rating}</span>
-                    <span className="flex items-center gap-1.5 text-portal-muted"><Users className="w-3.5 h-3.5" /> {movie.views?.toLocaleString()} views</span>
-                 </div>
-              </div>
+                  <div className="flex items-center gap-4 text-xs font-bold text-portal-muted bg-white w-fit px-4 py-2 rounded-full border border-portal-border shadow-sm">
+                     <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> {movie.year}</span>
+                     <span className="flex items-center gap-1.5 capitalize"><Monitor className="w-3.5 h-3.5" /> {movie.type}</span>
+                     <span className="flex items-center gap-1.5 text-yellow-500"><Star className="w-3.5 h-3.5 fill-yellow-500" /> {movie.rating}</span>
+                  </div>
+               </div>
 
-              {/* 5. Description */}
-              <div className="space-y-4">
-                 <h2 className="text-lg font-black tracking-tight flex items-center gap-2">
-                    Description
-                 </h2>
-                 <p className="text-portal-muted text-sm leading-relaxed font-medium">
-                    {movie.description}
-                 </p>
-              </div>
+               <div className="space-y-6 lg:pt-2">
+                  <div className="space-y-3">
+                     <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-portal-text">{movie.title}</h1>
+                     <div className="flex items-center gap-2 text-xs font-bold text-portal-muted">
+                        <Users className="w-3.5 h-3.5" /> {movie.views?.toLocaleString()} views
+                     </div>
+                  </div>
 
-              {/* 6. Genres */}
-              <div className="space-y-4">
-                 <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-black tracking-tight">Genres</h2>
-                    <div className="p-1.5 bg-white border border-portal-border rounded-lg shadow-sm">
-                       <Info className="w-4 h-4 text-portal-muted" />
-                    </div>
-                 </div>
-                 <div className="flex flex-wrap gap-2">
-                    {movie.genres.map(g => (
-                       <div key={g} className="flex items-center gap-2 bg-white border border-portal-border px-4 py-1.5 rounded-lg text-xs font-bold text-portal-muted shadow-sm hover:border-portal-accent transition-colors">
-                          <div className="w-3.5 h-3.5 bg-portal-muted/10 rounded" />
-                          {g}
-                       </div>
-                    ))}
-                 </div>
-              </div>
-           </div>
+                  <div className="space-y-4">
+                     <h2 className="text-lg font-black tracking-tight flex items-center gap-2">
+                        Description
+                     </h2>
+                     <p className="text-portal-muted text-sm leading-relaxed font-medium max-w-3xl">
+                        {movie.description}
+                     </p>
+                  </div>
 
-           {/* 7. Available Downloads */}
-           <DownloadSection downloads={movie.downloads} />
-        </div>
+                  <div className="space-y-4">
+                     <div className="flex items-center justify-between">
+                        <h2 className="text-lg font-black tracking-tight">Genres</h2>
+                        <div className="p-1.5 bg-white border border-portal-border rounded-lg shadow-sm">
+                           <Info className="w-4 h-4 text-portal-muted" />
+                        </div>
+                     </div>
+                     <div className="flex flex-wrap gap-2">
+                        {movie.genres.map(g => (
+                           <div key={g} className="flex items-center gap-2 bg-white border border-portal-border px-4 py-1.5 rounded-lg text-xs font-bold text-portal-muted shadow-sm hover:border-portal-accent transition-colors">
+                              <div className="w-3.5 h-3.5 bg-portal-muted/10 rounded" />
+                              {g}
+                           </div>
+                        ))}
+                     </div>
+                  </div>
+
+                  <DownloadSection downloads={movie.downloads} />
+               </div>
+                  </section>
       </main>
 
       <ViewTracker movieId={parseInt(id)} />

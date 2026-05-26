@@ -67,7 +67,7 @@ export default function HeroSection({ movie }: HeroSectionProps) {
 
             <div className="flex items-center justify-center md:justify-start gap-4 pt-4">
               <Link
-                href={`/movies/${movie.id}`}
+                href={`/movie/${movie.id}`}
                 className="bg-primary hover:bg-red-700 text-white px-8 py-3.5 rounded-lg font-bold flex items-center space-x-2 transition-all duration-300 ease-out transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
               >
                 <Play className="w-5 h-5 fill-current" />

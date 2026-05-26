@@ -10,14 +10,26 @@ export default function MovieCard({ movie, priority }: { movie: Movie, priority?
       className="group bg-white border border-portal-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col"
     >
       <div className="relative aspect-[2/3] w-full overflow-hidden">
-        <LoadingImage 
-          src={movie.poster_url} 
-          alt={movie.title}
-          fill
-          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 224px"
-          wrapperClassName="absolute inset-0"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+        {movie.poster_url ? (
+          <LoadingImage 
+            src={movie.poster_url} 
+            alt={movie.title}
+            fill
+            eager={priority}
+            priority={priority}
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 224px"
+            wrapperClassName="absolute inset-0"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-200 via-slate-100 to-slate-200">
+            <div className="absolute inset-0 flex items-end justify-start bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.8),transparent_55%)] p-3">
+              <span className="max-w-full truncate rounded-full border border-white/70 bg-white/80 px-2 py-1 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
+                No poster
+              </span>
+            </div>
+          </div>
+        )}
         <div className="absolute top-2 left-2">
            {movie.language && (
              <div className="bg-white text-black px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-sm max-w-[60px] truncate">
