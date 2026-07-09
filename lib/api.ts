@@ -1,29 +1,29 @@
-import { getMovieById } from './queries';
-import { Movie } from '@/types';
+﻿import { getMovieById } from './queries'
+import type { MovieDetailsData } from '@/components/portal/MovieDetailPage'
 
 /**
  * Server-side data fetching for movie details.
  * This avoids internal fetch calls to local API routes.
  */
-export async function getMovieDetails(id: string) {
-  const movieId = parseInt(id, 10);
-  if (isNaN(movieId)) return null;
+export async function getMovieDetails(id: string): Promise<MovieDetailsData | null> {
+  const movieId = parseInt(id, 10)
+  if (isNaN(movieId)) return null
 
-  const movie = await getMovieById(movieId);
-  if (!movie) return null;
+  const movie = await getMovieById(movieId)
+  if (!movie) return null
 
   const processLinks = (quality: string, value: string | null, label: string) => {
-    if (!value) return [];
+    if (!value) return []
     try {
-      const parsed = JSON.parse(value);
+      const parsed = JSON.parse(value)
       if (Array.isArray(parsed)) {
-        return parsed.map((item: any) => ({
+        return parsed.map((item: { episode?: string; url: string }) => ({
           quality,
           name: item.episode ? `${movie.title} - Ep ${item.episode} (${quality})` : `${movie.title} - ${quality}`,
           size: quality === '480p' ? '952.42 MB' : quality === '720p' ? '1.2 GB' : quality === '1080p' ? '2.4 GB' : '5.8 GB',
           tag: quality === '2k' ? 'Ultra HD' : 'Good Encode',
           url: item.url,
-        }));
+        }))
       }
     } catch {
       // Not JSON
@@ -35,11 +35,11 @@ export async function getMovieDetails(id: string) {
       size: quality === '480p' ? '952.42 MB' : quality === '720p' ? '1.2 GB' : quality === '1080p' ? '2.4 GB' : '5.8 GB',
       tag: quality === '2k' ? 'Ultra HD' : 'Good Encode',
       url: value,
-    }];
-  };
+    }]
+  }
 
-  // Map DB model to the requested frontend structure
   return {
+    id: movie.id,
     title: movie.title,
     year: movie.year,
     rating: movie.rating || 8.5,
@@ -55,5 +55,5 @@ export async function getMovieDetails(id: string) {
       ...processLinks('1080p', movie.download_1080p, '1080p'),
       ...processLinks('2k', movie.download_2k, '4K UHD'),
     ],
-  };
+  }
 }
