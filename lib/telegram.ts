@@ -1,3 +1,25 @@
+﻿import { getMovieDetailPath } from '@/lib/routes'
+
+async function canonicalizeLink(linkUrl?: string) {
+  if (!linkUrl) return linkUrl
+
+  const match = linkUrl.match(/\/(movie|series)\/(\d+)(?:[/?#].*)?$/)
+  if (!match) return linkUrl
+
+  try {
+    const url = new URL(linkUrl)
+    const response = await fetch(new URL(`/api/movies/${match[2]}`, url.origin))
+    if (!response.ok) return linkUrl
+
+    const movie = await response.json()
+    if (!movie?.id || !movie?.type) return linkUrl
+
+    return `${url.origin}${getMovieDetailPath(movie)}`
+  } catch {
+    return linkUrl
+  }
+}
+
 export async function sendTelegramNotification(message: string, posterUrl?: string, linkUrl?: string) {
   const BOT_TOKEN = process.env.WATCHIT_TELEGRAM_BOT_TOKEN?.trim();
   const CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID?.trim();
@@ -27,7 +49,7 @@ export async function sendTelegramNotification(message: string, posterUrl?: stri
 
   console.log(`Cleaned Channel ID: "${cleanChannelId}"`);
 
-  let validLinkUrl = linkUrl;
+  let validLinkUrl = await canonicalizeLink(linkUrl);
   if (validLinkUrl && validLinkUrl.includes('localhost')) {
     // Telegram API rejects localhost URLs in inline keyboards.
     // Replace with a dummy domain for local testing.
@@ -36,7 +58,7 @@ export async function sendTelegramNotification(message: string, posterUrl?: stri
 
   const replyMarkup = validLinkUrl ? {
     inline_keyboard: [
-      [{ text: '👉 Click here to watch', url: validLinkUrl }]
+      [{ text: 'ðŸ‘‰ Click here to watch', url: validLinkUrl }]
     ]
   } : undefined;
 
