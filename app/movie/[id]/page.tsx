@@ -43,6 +43,8 @@ export default async function MoviePage({
 
   if (!movie) notFound();
 
+  const posterSrc = movie.thumbnail || movie.bannerImage;
+
   // Get dynamic counts for each quality
   const qualityCounts = movie.downloads.reduce((acc, dl) => {
     acc[dl.quality] = (acc[dl.quality] || 0) + 1;
@@ -66,7 +68,7 @@ export default async function MoviePage({
                   <div className="relative overflow-hidden rounded-3xl border border-portal-border bg-white shadow-[0_24px_70px_rgba(15,23,42,0.12)]">
                      <div className="relative aspect-[2/3] w-full">
                         <LoadingImage 
-                           src={movie.poster_url || movie.bannerImage} 
+                           src={posterSrc} 
                            alt={movie.title}
                            fill
                            eager

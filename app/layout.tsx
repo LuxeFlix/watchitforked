@@ -2,11 +2,18 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import Script from 'next/script';
+import type { ReactNode } from 'react';
 import './globals.css';
 import SiteShell from '@/components/SiteShell';
-import React, { Suspense } from 'react';
+import { AdGateProvider } from '@/components/ad-gate/AdGateProvider';
+import { Suspense } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
+const adGateUrl =
+  process.env.NEXT_PUBLIC_ADSTERRA_SMARTLINK ||
+  process.env.VITE_ADSTERRA_SMARTLINK ||
+  process.env.ADSTERRA_SMARTLINK ||
+  '';
 
 export const metadata: Metadata = {
   title: 'Stream Movies & TV Shows',
@@ -16,11 +23,10 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <html lang="en">
-      <head />
       <body className={`${inter.className} bg-portal-bg text-portal-text antialiased`}>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-20SD6VSG3S"
@@ -32,9 +38,11 @@ export default function RootLayout({
             gtag('js', new Date());
             gtag('config', 'G-20SD6VSG3S');`}
         </Script>
-        <Suspense fallback={<div />}> 
-          <SiteShell>{children}</SiteShell>
-        </Suspense>
+        <AdGateProvider smartLinkUrl={adGateUrl}>
+          <Suspense fallback={<div />}>
+            <SiteShell>{children}</SiteShell>
+          </Suspense>
+        </AdGateProvider>
         <Analytics />
       </body>
     </html>

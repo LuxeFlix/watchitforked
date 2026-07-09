@@ -32,6 +32,25 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Adsterra SmartLink Gateway
+
+Set one of these environment variables to enable the gateway across the app:
+
+```env
+NEXT_PUBLIC_ADSTERRA_SMARTLINK=https://your-adsterra-smartlink.example
+# or
+VITE_ADSTERRA_SMARTLINK=https://your-adsterra-smartlink.example
+```
+
+Use the reusable wrappers for gated destinations:
+
+```tsx
+<DownloadButton url={movie.downloadUrl}>Download</DownloadButton>
+<ProtectedLink href={movie.downloadUrl}>Watch Now</ProtectedLink>
+```
+
+The root layout already mounts `AdGateProvider`, so raw external links are also intercepted globally.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

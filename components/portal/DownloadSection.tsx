@@ -1,7 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Download, Search, Settings2 } from 'lucide-react'
+import { Search } from 'lucide-react'
+import { DownloadButton } from '@/components/ad-gate'
 
 type DownloadItem = {
   quality: string
@@ -96,15 +97,7 @@ export default function DownloadSection({ downloads }: DownloadSectionProps) {
                   {download.tag || 'Good Encode'}
                 </div>
               </div>
-              <a
-                href={download.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-portal-text px-6 py-2.5 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-portal-accent sm:w-auto sm:justify-start"
-              >
-                <Download className="h-4 w-4" />
-                Download
-              </a>
+              <DownloadButton url={download.url}>Download</DownloadButton>
             </div>
           </div>
         ))}
