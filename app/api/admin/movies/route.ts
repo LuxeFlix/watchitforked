@@ -34,9 +34,10 @@ export async function POST(request: Request) {
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
       const typeLabel = movie.type === 'series' ? 'Series' : 'Movie'
       const message = `🎬 <b>New ${typeLabel} Uploaded!</b>\n\n` +
-        `<b>Title:</b> ${movie.title}\n` +
-        `<b>Year:</b> ${movie.year}\n` +
-        `<b>Quality:</b> ${movie.quality}\n\n` +
+        `📌<b>Title:</b> ${movie.title}\n` +
+        `📅 <b>Year:</b> ${movie.year}\n` +
+        `🎭 <b>Type:</b> ${typeLabel}\n` +
+        `🎬 <b>Quality:</b> ${movie.quality}\n\n` +
         `Check out the latest updates and links below:`
       
       const linkUrl = `${siteUrl}/movie/${movie.id}`

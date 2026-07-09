@@ -14,6 +14,7 @@ export default function AdGateModal() {
     countdown,
     adLaunched,
     popupBlocked,
+    returnedEarly,
     continueToDestination,
     smartLinkUrl,
   } = useAdGate()
@@ -21,9 +22,13 @@ export default function AdGateModal() {
 
   // Phase 1 (!adLaunched): user hasn't clicked Continue yet - button is always
   // clickable, clicking it opens the ad in a new tab and starts the timer.
-  // Phase 2 (adLaunched && countdown > 0): waiting on the timer, button disabled.
+  // Phase 2 (adLaunched && countdown > 0 && !returnedEarly): waiting on the
+  // timer while the ad tab is presumably still open, button disabled.
+  // Phase 2b (adLaunched && countdown > 0 && returnedEarly): the user bounced
+  // back before the wait was up - button re-enables so clicking it reopens
+  // the ad tab and restarts the timer.
   // Phase 3 (adLaunched && countdown === 0): button re-enables to go to the real link.
-  const canContinue = !adLaunched || countdown === 0
+  const canContinue = !adLaunched || countdown === 0 || returnedEarly
 
   const hostname = useMemo(() => {
     if (!pendingDestination) {
@@ -41,13 +46,21 @@ export default function AdGateModal() {
     return null
   }
 
-  const buttonLabel = !adLaunched ? 'Continue' : countdown > 0 ? `${countdown}s` : 'Continue to link'
+  const buttonLabel = !adLaunched
+    ? 'Continue'
+    : returnedEarly && countdown > 0
+      ? 'Reopen sponsored page'
+      : countdown > 0
+        ? `${countdown}s`
+        : 'Continue to link'
 
   const description = !adLaunched
     ? `Click Continue to open a sponsored page in a new tab. Once it opens, a short timer starts here - come back to this tab and continue to ${hostname || 'your requested link'} when it finishes.`
-    : countdown > 0
-      ? `Sponsored page is open in a new tab. This tab will unlock in ${countdown}s so you can continue to ${hostname || 'your requested link'}.`
-      : `You're all set. Click Continue to go to ${hostname || 'your requested link'}.`
+    : returnedEarly && countdown > 0
+      ? `You came back too soon. Click below to reopen the sponsored page - you'll need to stay away for the full ${countdown}s before you can continue to ${hostname || 'your requested link'}.`
+      : countdown > 0
+        ? `Sponsored page is open in a new tab. This tab will unlock in ${countdown}s so you can continue to ${hostname || 'your requested link'}.`
+        : `You're all set. Click Continue to go to ${hostname || 'your requested link'}.`
 
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6">
@@ -80,6 +93,15 @@ export default function AdGateModal() {
               {!adLaunched ? 'Not started' : countdown > 0 ? `${countdown}s` : 'Ready'}
             </div>
           </div>
+
+          {returnedEarly && countdown > 0 && (
+            <div className="flex items-center gap-2 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-xs leading-relaxed text-amber-200">
+              <TimerReset className="h-4 w-4 flex-none" />
+              <span>
+                You&apos;re back already! Tap the button below to reopen the sponsored page and try again.
+              </span>
+            </div>
+          )}
 
           {popupBlocked && (
             <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-xs leading-relaxed text-amber-200">

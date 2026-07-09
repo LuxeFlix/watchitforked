@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   createContext,
@@ -9,90 +9,92 @@ import {
   useRef,
   useState,
   type ReactNode,
-} from 'react'
-import AdGateModal from './AdGateModal'
+} from "react";
+import AdGateModal from "./AdGateModal";
 
-const STORAGE_KEY = 'adgate.pendingDestination'
-const STARTED_AT_KEY = 'adgate.startedAt'
-const AD_LAUNCHED_KEY = 'adgate.adLaunched'
-const COUNTDOWN_SECONDS = 5
+const STORAGE_KEY = "adgate.pendingDestination";
+const STARTED_AT_KEY = "adgate.startedAt";
+const AD_LAUNCHED_KEY = "adgate.adLaunched";
+const COUNTDOWN_SECONDS = 5;
 
 type AdGateContextValue = {
-  smartLinkUrl: string
-  pendingDestination: string | null
-  countdown: number
-  adLaunched: boolean
-  popupBlocked: boolean
-  isUnlocked: boolean
-  isPending: boolean
-  gateDestination: (destination: string) => boolean
-  continueToDestination: () => void
-  clearPendingDestination: () => void
-}
+  smartLinkUrl: string;
+  pendingDestination: string | null;
+  countdown: number;
+  adLaunched: boolean;
+  popupBlocked: boolean;
+  returnedEarly: boolean;
+  isUnlocked: boolean;
+  isPending: boolean;
+  gateDestination: (destination: string) => boolean;
+  continueToDestination: () => void;
+  clearPendingDestination: () => void;
+};
 
 const noopContext: AdGateContextValue = {
-  smartLinkUrl: '',
+  smartLinkUrl: "",
   pendingDestination: null,
   countdown: COUNTDOWN_SECONDS,
   adLaunched: false,
   popupBlocked: false,
+  returnedEarly: false,
   isUnlocked: false,
   isPending: false,
   gateDestination: () => false,
   continueToDestination: () => {},
   clearPendingDestination: () => {},
-}
+};
 
-const AdGateContext = createContext<AdGateContextValue>(noopContext)
+const AdGateContext = createContext<AdGateContextValue>(noopContext);
 
 function readPendingDestination() {
-  if (typeof window === 'undefined') {
-    return null
+  if (typeof window === "undefined") {
+    return null;
   }
 
   try {
-    return window.sessionStorage.getItem(STORAGE_KEY)
+    return window.sessionStorage.getItem(STORAGE_KEY);
   } catch {
-    return null
+    return null;
   }
 }
 
 function readStartedAt() {
-  if (typeof window === 'undefined') {
-    return null
+  if (typeof window === "undefined") {
+    return null;
   }
 
   try {
-    const value = window.sessionStorage.getItem(STARTED_AT_KEY)
+    const value = window.sessionStorage.getItem(STARTED_AT_KEY);
     if (!value) {
-      return null
+      return null;
     }
 
-    const parsed = Number(value)
-    return Number.isFinite(parsed) ? parsed : null
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
   } catch {
-    return null
+    return null;
   }
 }
 
 function readAdLaunched() {
-  if (typeof window === 'undefined') {
-    return false
+  if (typeof window === "undefined") {
+    return false;
   }
 
   try {
-    return window.sessionStorage.getItem(AD_LAUNCHED_KEY) === '1'
+    return window.sessionStorage.getItem(AD_LAUNCHED_KEY) === "1";
   } catch {
-    return false
+    return false;
   }
 }
 
 function writeGateState(destination: string) {
   try {
     // A fresh destination always starts a fresh gate: no timer, no ad launched yet.
-    window.sessionStorage.setItem(STORAGE_KEY, destination)
-    window.sessionStorage.removeItem(STARTED_AT_KEY)
-    window.sessionStorage.setItem(AD_LAUNCHED_KEY, '0')
+    window.sessionStorage.setItem(STORAGE_KEY, destination);
+    window.sessionStorage.removeItem(STARTED_AT_KEY);
+    window.sessionStorage.setItem(AD_LAUNCHED_KEY, "0");
   } catch {
     // Session storage may be unavailable in restrictive browsing modes.
   }
@@ -100,7 +102,7 @@ function writeGateState(destination: string) {
 
 function writeStartedAt(timestamp: number) {
   try {
-    window.sessionStorage.setItem(STARTED_AT_KEY, String(timestamp))
+    window.sessionStorage.setItem(STARTED_AT_KEY, String(timestamp));
   } catch {
     // Session storage may be unavailable in restrictive browsing modes.
   }
@@ -108,9 +110,9 @@ function writeStartedAt(timestamp: number) {
 
 function clearPendingDestinationStorage() {
   try {
-    window.sessionStorage.removeItem(STORAGE_KEY)
-    window.sessionStorage.removeItem(STARTED_AT_KEY)
-    window.sessionStorage.removeItem(AD_LAUNCHED_KEY)
+    window.sessionStorage.removeItem(STORAGE_KEY);
+    window.sessionStorage.removeItem(STARTED_AT_KEY);
+    window.sessionStorage.removeItem(AD_LAUNCHED_KEY);
   } catch {
     // Session storage may be unavailable in restrictive browsing modes.
   }
@@ -118,45 +120,45 @@ function clearPendingDestinationStorage() {
 
 function markAdLaunched() {
   try {
-    window.sessionStorage.setItem(AD_LAUNCHED_KEY, '1')
+    window.sessionStorage.setItem(AD_LAUNCHED_KEY, "1");
   } catch {
     // Session storage may be unavailable in restrictive browsing modes.
   }
 }
 
 function isGateableExternalHref(href: string) {
-  if (!href || typeof window === 'undefined') {
-    return false
+  if (!href || typeof window === "undefined") {
+    return false;
   }
 
   if (/^(mailto:|tel:|sms:|javascript:|#)/i.test(href)) {
-    return false
+    return false;
   }
 
   try {
-    const resolvedUrl = new URL(href, window.location.href)
+    const resolvedUrl = new URL(href, window.location.href);
     return (
-      (resolvedUrl.protocol === 'http:' || resolvedUrl.protocol === 'https:') &&
+      (resolvedUrl.protocol === "http:" || resolvedUrl.protocol === "https:") &&
       resolvedUrl.origin !== window.location.origin
-    )
+    );
   } catch {
-    return false
+    return false;
   }
 }
 
 export function isAdGateExternalHref(href: string) {
-  return isGateableExternalHref(href)
+  return isGateableExternalHref(href);
 }
 
 export function resolveAdGateHref(href: string) {
-  if (typeof window === 'undefined') {
-    return href
+  if (typeof window === "undefined") {
+    return href;
   }
 
   try {
-    return new URL(href, window.location.href).toString()
+    return new URL(href, window.location.href).toString();
   } catch {
-    return href
+    return href;
   }
 }
 
@@ -164,106 +166,181 @@ export function AdGateProvider({
   smartLinkUrl,
   children,
 }: {
-  smartLinkUrl: string
-  children: ReactNode
+  smartLinkUrl: string;
+  children: ReactNode;
 }) {
-  const [pendingDestination, setPendingDestination] = useState<string | null>(() => readPendingDestination())
+  const [pendingDestination, setPendingDestination] = useState<string | null>(
+    () => readPendingDestination(),
+  );
   // startedAt stays null until the user actually clicks "Continue" and the ad tab is opened.
-  const [startedAt, setStartedAt] = useState<number | null>(() => readStartedAt())
-  const [adLaunched, setAdLaunched] = useState<boolean>(() => readAdLaunched())
-  const [popupBlocked, setPopupBlocked] = useState(false)
-  const [now, setNow] = useState(() => Date.now())
-  const smartLinkUrlRef = useRef(smartLinkUrl)
+  const [startedAt, setStartedAt] = useState<number | null>(() =>
+    readStartedAt(),
+  );
+  const [adLaunched, setAdLaunched] = useState<boolean>(() => readAdLaunched());
+  const [popupBlocked, setPopupBlocked] = useState(false);
+  const [returnedEarly, setReturnedEarly] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+  const smartLinkUrlRef = useRef(smartLinkUrl);
 
   useEffect(() => {
-    smartLinkUrlRef.current = smartLinkUrl
-  }, [smartLinkUrl])
+    smartLinkUrlRef.current = smartLinkUrl;
+  }, [smartLinkUrl]);
 
   // The ticking interval only ever runs once the ad has actually been launched
   // and we have a real startedAt timestamp - i.e. after "Continue" was clicked.
   useEffect(() => {
     if (!pendingDestination || !adLaunched || !startedAt) {
-      return undefined
+      return undefined;
     }
 
     const timer = window.setInterval(() => {
-      setNow(Date.now())
-    }, 1000)
+      setNow(Date.now());
+    }, 1000);
 
-    return () => window.clearInterval(timer)
-  }, [pendingDestination, adLaunched, startedAt])
+    return () => window.clearInterval(timer);
+  }, [pendingDestination, adLaunched, startedAt]);
+
+  // Detect the user switching back to this tab (e.g. from the ad tab) before
+  // the countdown has actually finished, and flag it so the modal can show a
+  // "you're back too early, please wait" notice instead of just a disabled button.
+  useEffect(() => {
+    if (!pendingDestination || !adLaunched || !startedAt) {
+      return undefined;
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
+      const elapsedSeconds = Math.floor((Date.now() - startedAt) / 1000);
+      setNow(Date.now());
+
+      if (elapsedSeconds < COUNTDOWN_SECONDS) {
+        setReturnedEarly(true);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleVisibilityChange);
+    };
+  }, [pendingDestination, adLaunched, startedAt]);
 
   const countdown = useMemo(() => {
     // Before the ad has been launched there is nothing counting down yet -
     // we just show the full duration as a preview.
     if (!adLaunched || !startedAt) {
-      return COUNTDOWN_SECONDS
+      return COUNTDOWN_SECONDS;
     }
 
-    const elapsedSeconds = Math.floor((now - startedAt) / 1000)
-    return Math.max(COUNTDOWN_SECONDS - elapsedSeconds, 0)
-  }, [adLaunched, now, startedAt])
+    const elapsedSeconds = Math.floor((now - startedAt) / 1000);
+    return Math.max(COUNTDOWN_SECONDS - elapsedSeconds, 0);
+  }, [adLaunched, now, startedAt]);
 
-  const isUnlocked = Boolean(pendingDestination && adLaunched && countdown === 0)
+  const isUnlocked = Boolean(
+    pendingDestination && adLaunched && countdown === 0,
+  );
 
   const clearPendingDestination = useCallback(() => {
-    clearPendingDestinationStorage()
-    setPendingDestination(null)
-    setStartedAt(null)
-    setAdLaunched(false)
-    setPopupBlocked(false)
-    setNow(Date.now())
-  }, [])
+    clearPendingDestinationStorage();
+    setPendingDestination(null);
+    setStartedAt(null);
+    setAdLaunched(false);
+    setPopupBlocked(false);
+    setReturnedEarly(false);
+    setNow(Date.now());
+  }, []);
 
   const continueToDestination = useCallback(() => {
     if (!pendingDestination) {
-      return
+      return;
     }
+
+    const restartCountdown = () => {
+      const start = Date.now();
+      writeStartedAt(start);
+      setStartedAt(start);
+      setNow(start);
+    };
+
+    const reopenSponsoredPage = () => {
+      const adWindow = window.open(
+        smartLinkUrlRef.current,
+        "_blank",
+        "noopener,noreferrer",
+      );
+
+      setPopupBlocked(!adWindow);
+
+      if (adWindow) {
+        setReturnedEarly(false);
+        restartCountdown();
+      }
+    };
 
     // First click: open the ad in a brand new tab only, and start the timer
     // on THIS (original) tab. We never navigate the original tab to the ad.
     if (!adLaunched) {
-      const adWindow = window.open(smartLinkUrlRef.current, '_blank', 'noopener,noreferrer')
+      const adWindow = window.open(
+        smartLinkUrlRef.current,
+        "_blank",
+        "noopener,noreferrer",
+      );
 
-      markAdLaunched()
-      setAdLaunched(true)
-      setPopupBlocked(!adWindow)
+      markAdLaunched();
+      setAdLaunched(true);
+      setPopupBlocked(!adWindow);
+      setReturnedEarly(false);
+      restartCountdown();
 
-      const start = Date.now()
-      writeStartedAt(start)
-      setStartedAt(start)
-      setNow(start)
-
-      return
+      return;
     }
 
-    // Second click (only reachable once countdown === 0): send THIS tab to
-    // the real destination.
+    // The user came back before the wait was up. Reopen the sponsored page
+    // and restart the timer. If the popup is blocked, keep the retry state so
+    // they can try again after adjusting browser permissions.
+    if (returnedEarly && countdown > 0) {
+      reopenSponsoredPage();
+      return;
+    }
+
+    // Only reachable once countdown === 0 (and the user didn't just bounce
+    // back early): send THIS tab to the real destination.
     if (countdown > 0) {
-      return
+      return;
     }
 
-    clearPendingDestination()
-    window.location.assign(pendingDestination)
-  }, [adLaunched, clearPendingDestination, countdown, pendingDestination])
+    clearPendingDestination();
+    window.location.assign(pendingDestination);
+  }, [
+    adLaunched,
+    clearPendingDestination,
+    countdown,
+    pendingDestination,
+    returnedEarly,
+  ]);
 
   const gateDestination = useCallback(
     (destination: string) => {
       if (!destination || !smartLinkUrlRef.current || pendingDestination) {
-        return false
+        return false;
       }
 
-      writeGateState(destination)
-      setPendingDestination(destination)
-      setStartedAt(null)
-      setAdLaunched(false)
-      setPopupBlocked(false)
-      setNow(Date.now())
-      return true
+      writeGateState(destination);
+      setPendingDestination(destination);
+      setStartedAt(null);
+      setAdLaunched(false);
+      setPopupBlocked(false);
+      setReturnedEarly(false);
+      setNow(Date.now());
+      return true;
     },
     [pendingDestination],
-  )
-
+  );
 
   const value = useMemo(
     () => ({
@@ -272,23 +349,35 @@ export function AdGateProvider({
       countdown,
       adLaunched,
       popupBlocked,
+      returnedEarly,
       isUnlocked,
       isPending: Boolean(pendingDestination),
       gateDestination,
       continueToDestination,
       clearPendingDestination,
     }),
-    [adLaunched, clearPendingDestination, continueToDestination, countdown, gateDestination, isUnlocked, pendingDestination, popupBlocked, smartLinkUrl],
-  )
+    [
+      adLaunched,
+      clearPendingDestination,
+      continueToDestination,
+      countdown,
+      gateDestination,
+      isUnlocked,
+      pendingDestination,
+      popupBlocked,
+      returnedEarly,
+      smartLinkUrl,
+    ],
+  );
 
   return (
     <AdGateContext.Provider value={value}>
       {children}
       <AdGateModal />
     </AdGateContext.Provider>
-  )
+  );
 }
 
 export function useAdGate() {
-  return useContext(AdGateContext)
+  return useContext(AdGateContext);
 }
