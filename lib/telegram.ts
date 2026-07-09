@@ -58,7 +58,7 @@ export async function sendTelegramNotification(message: string, posterUrl?: stri
 
   const replyMarkup = validLinkUrl ? {
     inline_keyboard: [
-      [{ text: 'ðŸ‘‰ Click here to watch', url: validLinkUrl }]
+      [{ text: 'Click here to watch', url: validLinkUrl }]
     ]
   } : undefined;
 
