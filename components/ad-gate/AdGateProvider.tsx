@@ -22,6 +22,7 @@ type AdGateContextValue = {
   pendingDestination: string | null
   countdown: number
   adLaunched: boolean
+  popupBlocked: boolean
   isUnlocked: boolean
   isPending: boolean
   gateDestination: (destination: string) => boolean
@@ -34,6 +35,7 @@ const noopContext: AdGateContextValue = {
   pendingDestination: null,
   countdown: COUNTDOWN_SECONDS,
   adLaunched: false,
+  popupBlocked: false,
   isUnlocked: false,
   isPending: false,
   gateDestination: () => false,
@@ -87,9 +89,18 @@ function readAdLaunched() {
 
 function writeGateState(destination: string) {
   try {
+    // A fresh destination always starts a fresh gate: no timer, no ad launched yet.
     window.sessionStorage.setItem(STORAGE_KEY, destination)
-    window.sessionStorage.setItem(STARTED_AT_KEY, String(Date.now()))
+    window.sessionStorage.removeItem(STARTED_AT_KEY)
     window.sessionStorage.setItem(AD_LAUNCHED_KEY, '0')
+  } catch {
+    // Session storage may be unavailable in restrictive browsing modes.
+  }
+}
+
+function writeStartedAt(timestamp: number) {
+  try {
+    window.sessionStorage.setItem(STARTED_AT_KEY, String(timestamp))
   } catch {
     // Session storage may be unavailable in restrictive browsing modes.
   }
@@ -157,8 +168,10 @@ export function AdGateProvider({
   children: ReactNode
 }) {
   const [pendingDestination, setPendingDestination] = useState<string | null>(() => readPendingDestination())
+  // startedAt stays null until the user actually clicks "Continue" and the ad tab is opened.
   const [startedAt, setStartedAt] = useState<number | null>(() => readStartedAt())
   const [adLaunched, setAdLaunched] = useState<boolean>(() => readAdLaunched())
+  const [popupBlocked, setPopupBlocked] = useState(false)
   const [now, setNow] = useState(() => Date.now())
   const smartLinkUrlRef = useRef(smartLinkUrl)
 
@@ -166,8 +179,10 @@ export function AdGateProvider({
     smartLinkUrlRef.current = smartLinkUrl
   }, [smartLinkUrl])
 
+  // The ticking interval only ever runs once the ad has actually been launched
+  // and we have a real startedAt timestamp - i.e. after "Continue" was clicked.
   useEffect(() => {
-    if (!pendingDestination || !startedAt) {
+    if (!pendingDestination || !adLaunched || !startedAt) {
       return undefined
     }
 
@@ -176,16 +191,18 @@ export function AdGateProvider({
     }, 1000)
 
     return () => window.clearInterval(timer)
-  }, [pendingDestination, startedAt])
+  }, [pendingDestination, adLaunched, startedAt])
 
   const countdown = useMemo(() => {
-    if (!startedAt) {
+    // Before the ad has been launched there is nothing counting down yet -
+    // we just show the full duration as a preview.
+    if (!adLaunched || !startedAt) {
       return COUNTDOWN_SECONDS
     }
 
     const elapsedSeconds = Math.floor((now - startedAt) / 1000)
     return Math.max(COUNTDOWN_SECONDS - elapsedSeconds, 0)
-  }, [now, startedAt])
+  }, [adLaunched, now, startedAt])
 
   const isUnlocked = Boolean(pendingDestination && adLaunched && countdown === 0)
 
@@ -194,23 +211,35 @@ export function AdGateProvider({
     setPendingDestination(null)
     setStartedAt(null)
     setAdLaunched(false)
+    setPopupBlocked(false)
     setNow(Date.now())
   }, [])
 
   const continueToDestination = useCallback(() => {
-    if (!pendingDestination || countdown > 0) {
+    if (!pendingDestination) {
       return
     }
 
+    // First click: open the ad in a brand new tab only, and start the timer
+    // on THIS (original) tab. We never navigate the original tab to the ad.
     if (!adLaunched) {
+      const adWindow = window.open(smartLinkUrlRef.current, '_blank', 'noopener,noreferrer')
+
       markAdLaunched()
       setAdLaunched(true)
+      setPopupBlocked(!adWindow)
 
-      const adWindow = window.open(smartLinkUrlRef.current, '_blank', 'noopener,noreferrer')
-      if (!adWindow) {
-        window.location.assign(smartLinkUrlRef.current)
-      }
+      const start = Date.now()
+      writeStartedAt(start)
+      setStartedAt(start)
+      setNow(start)
 
+      return
+    }
+
+    // Second click (only reachable once countdown === 0): send THIS tab to
+    // the real destination.
+    if (countdown > 0) {
       return
     }
 
@@ -226,8 +255,9 @@ export function AdGateProvider({
 
       writeGateState(destination)
       setPendingDestination(destination)
-      setStartedAt(Date.now())
+      setStartedAt(null)
       setAdLaunched(false)
+      setPopupBlocked(false)
       setNow(Date.now())
       return true
     },
@@ -241,13 +271,14 @@ export function AdGateProvider({
       pendingDestination,
       countdown,
       adLaunched,
+      popupBlocked,
       isUnlocked,
       isPending: Boolean(pendingDestination),
       gateDestination,
       continueToDestination,
       clearPendingDestination,
     }),
-    [adLaunched, clearPendingDestination, continueToDestination, countdown, gateDestination, isUnlocked, pendingDestination, smartLinkUrl],
+    [adLaunched, clearPendingDestination, continueToDestination, countdown, gateDestination, isUnlocked, pendingDestination, popupBlocked, smartLinkUrl],
   )
 
   return (
@@ -261,8 +292,3 @@ export function AdGateProvider({
 export function useAdGate() {
   return useContext(AdGateContext)
 }
-
-
-
-
-
