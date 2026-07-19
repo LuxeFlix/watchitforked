@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import Image, { type ImageProps } from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type LoadingImageProps = ImageProps & {
   wrapperClassName: string;
@@ -19,12 +19,10 @@ export default function LoadingImage({
   onLoad,
   ...props
 }: LoadingImageProps) {
-  const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+  const [errorSrc, setErrorSrc] = useState<string | null>(null);
   const isPriority = eager || props.priority === true;
-
-  useEffect(() => {
-    setStatus('loading');
-  }, [src]);
+  const status = loadedSrc === src ? 'loaded' : errorSrc === src ? 'error' : 'loading';
 
   return (
     <div className={wrapperClassName}>
@@ -39,15 +37,17 @@ export default function LoadingImage({
         loading={isPriority ? 'eager' : props.loading}
         src={src}
         alt={alt}
+        draggable={false}
         onLoad={(event) => {
-          setStatus('loaded');
+          setLoadedSrc(String(src));
+          setErrorSrc(null);
           onLoad?.(event);
         }}
         onError={(event) => {
-          setStatus('error');
+          setErrorSrc(String(src));
           props.onError?.(event);
         }}
-        className={`${className ?? ''} transition-opacity duration-300 ${status === 'loaded' ? 'opacity-100' : 'opacity-0'}`.trim()}
+        className={`${className ?? ''} select-none transition-opacity duration-300 ${status === 'loaded' ? 'opacity-100' : 'opacity-0'}`.trim()}
       />
       {status === 'error' && (
         <div className="absolute inset-0 flex items-center justify-center rounded-[inherit] bg-gradient-to-br from-slate-200 via-white to-slate-100 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-400">

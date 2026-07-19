@@ -290,16 +290,21 @@ export default function MovieTable({ movies }: { movies: Movie[] }) {
                         <div className="flex items-center gap-2">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
+                              {/* <span className={movie.status === 'published' ? 'admin-pill admin-pill-status-published' : 'admin-pill admin-pill-status-draft'}>{movie.status}</span> */}
+                           
                               <span className="line-clamp-2 font-semibold leading-5 text-text-primary">{movie.title}</span>
-                              <span className={movie.status === 'published' ? 'admin-pill admin-pill-status-published' : 'admin-pill admin-pill-status-draft'}>{movie.status}</span>
-                            </div>
+                               </div>
                             <div className="line-clamp-1 text-[11px] text-text-secondary">
                               {movie.description ? truncateDescription(movie.description) : movie.language}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="p-2.5 align-middle">{movie.status}</td>
+                      <td className="p-2.5 align-middle">
+                        <span className={movie.status === 'published' ? 'admin-pill admin-pill-status-published' : 'admin-pill admin-pill-status-draft'}>
+                          {movie.status}
+                        </span>
+                      </td>
                       <td className="p-2.5 align-middle">{movie.type}</td>
                       <td className="p-2.5 align-middle">{movie.quality}</td>
                       <td className="p-2.5 align-middle">{movie.year}</td>

@@ -1,4 +1,4 @@
-import MovieCard from './MovieCard';
+﻿import MovieCard from './MovieCard';
 import { Movie } from '@/types';
 import Link from 'next/link';
 

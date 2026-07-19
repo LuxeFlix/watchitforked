@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import Script from 'next/script';
 import type { ReactNode } from 'react';
@@ -8,7 +7,6 @@ import SiteShell from '@/components/SiteShell';
 import { AdGateProvider } from '@/components/ad-gate/AdGateProvider';
 import { Suspense } from 'react';
 
-const inter = Inter({ subsets: ['latin'] });
 const adGateUrl =
   process.env.NEXT_PUBLIC_ADSTERRA_SMARTLINK ||
   process.env.VITE_ADSTERRA_SMARTLINK ||
@@ -27,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-portal-bg text-portal-text antialiased`}>
+      <body className="bg-portal-bg text-portal-text antialiased">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-20SD6VSG3S"
           strategy="afterInteractive"

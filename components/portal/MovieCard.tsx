@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { Star, Calendar } from 'lucide-react'
 import { Movie } from '@/types'
 import LoadingImage from './LoadingImage'
